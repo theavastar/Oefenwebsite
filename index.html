@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oefenprogramma's</title>
+  <title>Oefenprogramma's NaSk</title>
   <style>
     :root {
-      --bg-color: #f4f6f9;
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
       --card-bg: #ffffff;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
       --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
+      --text-link: #334155;
+      --hover-bg: #f1f5f9;
+      --accent: #1e78b8;
     }
 
     * {
@@ -23,138 +23,231 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
+      background-color: var(--bg-blue);
       color: var(--text-main);
-      line-height: 1.5;
-      padding: 2rem 1rem;
+      min-height: 100vh;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    /* Raster voor de kaarten */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    /* Kaart-ontwerp */
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
+    /* Bovenbalk zoals in start.me */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-    }
-
-    .tag {
-      display: inline-block;
-      background: #e0e7ff;
-      color: var(--primary);
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
-      margin-bottom: 0.75rem;
-      width: fit-content;
-    }
-
-    .card h2 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .card p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .btn {
-      display: block;
-      text-align: center;
-      background-color: var(--primary);
+    .topbar h1 {
       color: #ffffff;
-      text-decoration: none;
+      font-size: 1.25rem;
       font-weight: 600;
-      padding: 0.75rem 1rem;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.5rem 0.85rem 0.5rem 2.2rem;
       border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
       transition: background-color 0.15s ease;
     }
 
-    .btn:hover {
-      background-color: var(--primary-hover);
+    .search-box input::placeholder {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .search-box input:focus {
+      background-color: #ffffff;
+      color: var(--text-main);
+    }
+
+    .search-box input:focus::placeholder {
+      color: #94a3b8;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.85);
+      pointer-events: none;
+      font-size: 0.9rem;
+    }
+
+    .search-box input:focus + .search-icon {
+      color: #64748b;
+    }
+
+    /* Masonry-indeling: tegels sluiten verticaal direct op elkaar aan */
+    .board {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1.25rem;
+      columns: 3 300px;
+      column-gap: 1.25rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.15rem 1.25rem;
+      margin-bottom: 1.25rem;
+      break-inside: avoid;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .link-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .link-list a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text-link);
+      font-size: 0.95rem;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+
+    .link-list a:hover {
+      background-color: var(--hover-bg);
+      color: var(--accent);
+    }
+
+    .icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      background-color: #e0f2fe;
+      color: var(--accent);
+      border-radius: 4px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>Oefenprogramma's</h1>
-      <p>Kies hieronder een onderdeel om te starten.</p>
-    </header>
+  <header class="topbar">
+    <h1>Oefenprogramma's NaSk</h1>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Zoek oefening of formule..." aria-label="Zoek oefening">
+      <span class="search-icon">🔍</span>
+    </div>
+  </header>
 
-    <main class="grid">
+  <main class="board" id="board">
 
-      <!-- KAART 1: Kopieer dit blok voor elk nieuw programma -->
-      <article class="card">
-        <div>
-          <span class="tag">Formules</span>
-          <h2>P=U*I</h2>
-        </div>
-        <a href="p=u*i.html" class="btn">Start oefening</a>
-      </article>
+    <!-- TEGEL 1 -->
+    <section class="card">
+      <h2>Basis voor rekenen</h2>
+      <ul class="link-list">
+        <li><a href="eenheden-omrekenen.html"><span class="icon">⇄</span>Eenheden omrekenen</a></li>
+        <li><a href="nask-oefenapp.html"><span class="icon">★</span>GGFIRE – NaSk Oefenapp</a></li>
+      </ul>
+    </section>
 
-      <!-- KAART 2 -->
-      <article class="card">
-        <div>
-          <span class="tag">Taal</span>
-          <h2>Werkwoordspelling</h2>
-          <p>Tegenwoordige en verleden tijd invullen.</p>
-        </div>
-        <a href="werkwoorden.html" class="btn">Start oefening</a>
-      </article>
+    <!-- TEGEL 2 -->
+    <section class="card">
+      <h2>Interactieve applicaties</h2>
+      <ul class="link-list">
+        <li><a href="oscilloscoop.html"><span class="icon">〰</span>Aflezen oscilloscoop en frequentie</a></li>
+        <li><a href="randstralen.html"><span class="icon">☀</span>Oefenen met randstralen tekenen</a></li>
+      </ul>
+    </section>
 
-      <!-- KAART 3 -->
-      <article class="card">
-        <div>
-          <span class="tag">Wereldoriëntatie</span>
-          <h2>Topografie Nederland</h2>
-          <p>Klik de provincies en hoofdsteden aan op de kaart.</p>
-        </div>
-        <a href="topografie.html" class="btn">Start oefening</a>
-      </article>
+    <!-- TEGEL 3 -->
+    <section class="card">
+      <h2>Oefenen met formules</h2>
+      <ul class="link-list">
+        <li><a href="formule-dichtheid.html"><span class="icon">ƒ</span>Oefenen met ρ = m / V</a></li>
+        <li><a href="formule-snelheid.html"><span class="icon">ƒ</span>Oefenen met v = s / t</a></li>
+        <li><a href="formule-frequentie.html"><span class="icon">ƒ</span>Oefenen met f = 1 / T</a></li>
+        <li><a href="formule-vermogen.html"><span class="icon">ƒ</span>Oefenen met P = U · I</a></li>
+        <li><a href="formule-weerstand.html"><span class="icon">ƒ</span>Oefenen met R = U / I</a></li>
+        <li><a href="formule-energie.html"><span class="icon">ƒ</span>Oefenen met E = P · t</a></li>
+        <li><a href="formule-transformator.html"><span class="icon">ƒ</span>Oefenen Np / Ns = Up / Us</a></li>
+      </ul>
+    </section>
 
-    </main>
-  </div>
+    <!-- TEGEL 4 -->
+    <section class="card">
+      <h2>Oefenen met verhaalsommen</h2>
+      <ul class="link-list">
+        <li><a href="verhaalsommen-1.html"><span class="icon">✎</span>Oefenen met verhaalsommen – deel 1</a></li>
+        <li><a href="verhaalsommen-2.html"><span class="icon">✎</span>Oefenen met verhaalsommen – deel 2</a></li>
+        <li><a href="verhaalsommen-3.html"><span class="icon">✎</span>Oefenen met verhaalsommen – deel 3</a></li>
+      </ul>
+    </section>
+
+    <!-- TEGEL 5 -->
+    <section class="card">
+      <h2>Oefenen met elektriciteit</h2>
+      <ul class="link-list">
+        <li><a href="totale-weerstand.html"><span class="icon">⚡</span>Totale weerstand berekenen</a></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <script>
+    // Live zoekfunctie voor leerlingen
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.card');
+
+    searchInput.addEventListener('input', function () {
+      const query = this.value.toLowerCase().trim();
+
+      cards.forEach(card => {
+        const items = card.querySelectorAll('li');
+        let hasVisibleItem = false;
+
+        items.forEach(item => {
+          const text = item.textContent.toLowerCase();
+          if (text.includes(query)) {
+            item.style.display = '';
+            hasVisibleItem = true;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        // Verberg de hele tegel als er geen enkele match in staat
+        card.style.display = hasVisibleItem ? '' : 'none';
+      });
+    });
+  </script>
 
 </body>
 </html>
