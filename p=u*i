@@ -1,0 +1,340 @@
+<style>
+    :root {
+        --primary: #3b82f6;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #f8fafc;
+        --text: #1e293b;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        max-width: 420px;
+        width: 100%;
+        text-align: center;
+    }
+
+    h1 {
+        color: var(--primary);
+        margin-top: 0;
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .score-board {
+        display: flex;
+        justify-content: space-around;
+        background: #f1f5f9;
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .formula-box {
+        background: #e0f2fe;
+        color: #0369a1;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .question {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        text-align: left;
+        min-height: 60px;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    input[type="number"] {
+        padding: 10px;
+        font-size: 14px;
+        border: 2px solid #cbd5e1;
+        border-radius: 6px;
+        width: 100px;
+        text-align: center;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    input[type="number"]:focus {
+        border-color: var(--primary);
+    }
+
+    input[type="number"].input-correct {
+        border-color: var(--success) !important;
+        background-color: #e6ffeb !important;
+        font-weight: bold;
+        color: #065f46;
+    }
+
+    input[type="number"].input-wrong {
+        border-color: var(--danger) !important;
+        background-color: #fff1f0 !important;
+        font-weight: bold;
+        color: #991b1b;
+    }
+
+    .unit {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    button {
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-secondary { background: #64748b; color: white; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-warning { background: var(--warning); color: white; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; }
+
+    .feedback {
+        margin-top: 12px;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        display: none;
+    }
+
+    .feedback.correct { display: block; background: #d1fae5; color: #065f46; }
+    .feedback.wrong { display: block; background: #fee2e2; color: #991b1b; }
+
+    .hint-box {
+        display: none;
+        margin-top: 12px;
+        padding: 12px;
+        background: #fff8eb;
+        color: #b45309;
+        border-radius: 6px;
+        font-size: 13px;
+        line-height: 1.5;
+        text-align: left;
+        border-left: 4px solid #f59e0b;
+    }
+
+    .example-math {
+        font-family: monospace;
+        background: #fef3c7;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 5px 0;
+        font-size: 14px;
+    }
+</style>
+
+<div class="container">
+    <h1>Oefenen met P = U &times; I</h1>
+    
+    <div class="score-board">
+        <span>Goed: <span id="score-correct" style="color: var(--success)">0</span></span>
+        <span>Fout: <span id="score-wrong" style="color: var(--danger)">0</span></span>
+    </div>
+
+    <div class="formula-box">Formule: P = U &times; I</div>
+
+    <div class="question" id="question-text">Vraag wordt geladen...</div>
+
+    <div class="input-group">
+        <input type="number" id="user-answer" step="any" placeholder="Antwoord">
+        <span id="unit-label" class="unit">-</span>
+    </div>
+
+    <div style="display: flex; gap: 8px; justify-content: center;">
+        <button class="btn-primary" id="btn-check" onclick="checkAnswer()">Controleer</button>
+        <button class="btn-warning" id="btn-retry" onclick="retryQuestion()" style="display: none;">Probeer het nog eens</button>
+        <button class="btn-success" id="btn-next" onclick="nextQuestion()" style="display: none;">Volgende vraag</button>
+        <button class="btn-secondary" id="btn-hint" onclick="toggleHint()">Tip?</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="hint-box" id="hint-box">
+        <strong>Formule omschrijven:</strong><br>
+        Bedenk een simpel goudgetallen-sommetje dat hetzelfde werkt:
+        <br>
+        <div class="example-math">6 = 2 &times; 3</div> (waarbij P=6, U=2 en I=3)
+        <br>
+        <span id="hint-explanation"></span>
+    </div>
+</div>
+
+<script>
+    let currentQuestion = {};
+    let score = { correct: 0, wrong: 0 };
+    let attempts = 0; // Houdt het aantal pogingen bij voor de huidige som
+
+    const questionTypes = ['P', 'U', 'I'];
+
+    function generateQuestion() {
+        attempts = 0;
+        document.getElementById('feedback').className = 'feedback';
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('hint-box').style.display = 'none';
+        
+        const inputField = document.getElementById('user-answer');
+        inputField.value = '';
+        inputField.disabled = false;
+        inputField.className = ''; 
+        
+        document.getElementById('btn-check').style.display = 'inline-block';
+        document.getElementById('btn-retry').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+
+        const U = Math.floor(Math.random() * 23 + 1) * 10;
+        const I = parseFloat((Math.random() * 4 + 0.5).toFixed(1));
+        const P = parseFloat((U * I).toFixed(1));
+
+        const type = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+        
+        if (type === 'P') {
+            currentQuestion = {
+                text: `Een apparaat is aangesloten op een spanning van <strong>${U} V</strong>. Er loopt een stroom van <strong>${I} A</strong> doorheen. <br><br>Bereken het vermogen (P).`,
+                answer: P,
+                unit: 'W',
+                hint: 'Je zoekt <b>P</b> (het getal 6). Om 6 te krijgen met de cijfers 2 en 3, doe je 2 &times; 3. Dus de formule blijft: <br><b>P = U &times; I</b>'
+            };
+        } else if (type === 'U') {
+            currentQuestion = {
+                text: `Een apparaat levert een vermogen van <strong>${P} W</strong>. De stroomsterkte is gemeten op <strong>${I} A</strong>. <br><br>Bereken de spanning (U).`,
+                answer: U,
+                unit: 'V',
+                hint: 'Je zoekt <b>U</b> (het getal 2). Om 2 te krijgen met de cijfers 6 en 3, doe je 6 / 3. Dus de formule wordt: <br><b>U = P / I</b>'
+            };
+        } else {
+            currentQuestion = {
+                text: `Een lamp van <strong>${P} W</strong> is aangesloten op een spanning van <strong>${U} V</strong>. <br><br>Bereken de stroomsterkte (I).`,
+                answer: I,
+                unit: 'A',
+                hint: 'Je zoekt <b>I</b> (het getal 3). Om 3 te krijgen met de cijfers 6 en 2, doe je 6 / 2. Dus de formule wordt: <br><b>I = P / U</b>'
+            };
+        }
+
+        document.getElementById('question-text').innerHTML = currentQuestion.text;
+        document.getElementById('unit-label').innerText = currentQuestion.unit;
+    }
+
+    function checkAnswer() {
+        const inputField = document.getElementById('user-answer');
+        const userAns = parseFloat(inputField.value);
+        const feedbackEl = document.getElementById('feedback');
+
+        if (isNaN(userAns)) {
+            alert('Vul eerst een getal in!');
+            return;
+        }
+
+        attempts++;
+        const isCorrect = Math.abs(userAns - currentQuestion.answer) < 0.11;
+
+        if (isCorrect) {
+            // Antwoord is goed (of direct, of in de herkansing)
+            inputField.disabled = true;
+            inputField.className = 'input-correct';
+            feedbackEl.innerText = `Goed gedaan! Het antwoord is ${currentQuestion.answer} ${currentQuestion.unit}.`;
+            feedbackEl.className = 'feedback correct';
+            
+            score.correct++;
+            document.getElementById('score-correct').innerText = score.correct;
+            
+            document.getElementById('btn-check').style.display = 'none';
+            document.getElementById('btn-retry').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'inline-block';
+        } else {
+            // Antwoord is fout
+            if (attempts === 1) {
+                // Eerste fout: geef een tweede kans
+                inputField.className = 'input-wrong';
+                feedbackEl.innerText = `Niet helemaal juist. Kijk goed naar de tip hieronder en probeer het nog een keer!`;
+                feedbackEl.className = 'feedback wrong';
+                
+                document.getElementById('btn-check').style.display = 'none';
+                document.getElementById('btn-retry').style.display = 'inline-block';
+                
+                // Toon direct automatisch de tip
+                document.getElementById('hint-explanation').innerHTML = currentQuestion.hint;
+                document.getElementById('hint-box').style.display = 'block';
+            } else {
+                // Tweede fout: definitief fout gerekend
+                inputField.disabled = true;
+                inputField.className = 'input-wrong';
+                feedbackEl.innerText = `Helaas, dit was de tweede poging. Het juiste antwoord was ${currentQuestion.answer} ${currentQuestion.unit}.`;
+                feedbackEl.className = 'feedback wrong';
+                
+                score.wrong++;
+                document.getElementById('score-wrong').innerText = score.wrong;
+                
+                document.getElementById('btn-retry').style.display = 'none';
+                document.getElementById('btn-next').style.display = 'inline-block';
+            }
+        }
+    }
+
+    function retryQuestion() {
+        // Maak het invoerveld weer klaar voor de tweede poging
+        const inputField = document.getElementById('user-answer');
+        inputField.className = '';
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('btn-retry').style.display = 'none';
+        document.getElementById('btn-check').style.display = 'inline-block';
+        inputField.focus();
+    }
+
+    function nextQuestion() {
+        generateQuestion();
+    }
+
+    function toggleHint() {
+        const hintBox = document.getElementById('hint-box');
+        document.getElementById('hint-explanation').innerHTML = currentQuestion.hint;
+        
+        if (hintBox.style.display === 'none' || hintBox.style.display === '') {
+            hintBox.style.display = 'block';
+        } else {
+            hintBox.style.display = 'none';
+        }
+    }
+
+    generateQuestion();
+</script>
