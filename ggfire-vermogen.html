@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGFIRE Stappenplan Trainer — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #059669;
+      --tile-bg: #d1fae5;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Centreer de oefenkaart op het scherm */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.35rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .story-box {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--tile-color);
+      border-top: 1px solid #f1f5f9;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.96rem;
+      line-height: 1.55;
+      text-align: left;
+      margin-bottom: 1.15rem;
+    }
+
+    .ggfire-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      text-align: left;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+    }
+
+    .step-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--tile-color);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.45rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .step-badge {
+      background: var(--tile-color);
+      color: #ffffff;
+      border-radius: 4px;
+      padding: 0.12rem 0.45rem;
+      font-size: 0.72rem;
+    }
+
+    .step-row {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+      margin-top: 0.35rem;
+    }
+
+    select, input[type="number"] {
+      padding: 0.45rem 0.6rem;
+      font-size: 0.9rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: var(--tile-color);
+    }
+
+    input[type="number"] {
+      width: 85px;
+      text-align: center;
+    }
+
+    select {
+      background: #ffffff;
+    }
+
+    input.input-correct, select.input-correct {
+      border-color: var(--success) !important;
+      background-color: #ecfdf5 !important;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    input.input-wrong, select.input-wrong {
+      border-color: var(--danger) !important;
+      background-color: #fef2f2 !important;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.65rem 1.1rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary { background: var(--tile-color); color: white; }
+    .btn-primary:hover { background: #047857; }
+    .btn-secondary { background: #64748b; color: white; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-warning { background: var(--warning); color: white; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; }
+
+    .feedback {
+      margin-top: 1rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: none;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .feedback.correct { display: block; background: #d1fae5; color: #065f46; }
+    .feedback.wrong { display: block; background: #fee2e2; color: #991b1b; }
+
+    .hint-box {
+      display: none;
+      margin-top: 0.9rem;
+      padding: 0.85rem;
+      background: #fffbeb;
+      color: #92400e;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      line-height: 1.5;
+      text-align: left;
+      border-left: 4px solid var(--warning);
+    }
+
+    .example-math {
+      font-family: monospace;
+      background: #fef3c7;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <span class="category-tag">Formulegebruik met GGFIRE</span>
+      <h1>GGFIRE Stappenplan Trainer</h1>
+
+      <div class="score-board">
+        <span>Goed: <span id="score-correct" style="color: var(--success)">0</span></span>
+        <span>Fout: <span id="score-wrong" style="color: var(--danger)">0</span></span>
+      </div>
+
+      <div class="story-box" id="story-text">Vraag wordt geladen...</div>
+
+      <div class="ggfire-steps">
+        <!-- G1 - Gegeven -->
+        <div class="step-card">
+          <div class="step-title"><span class="step-badge">G</span> Gegeven (uit de tekst)</div>
+          <div class="step-row">
+            <span>Gegeven 1:</span>
+            <input type="number" id="g1-val" step="any" placeholder="Getal">
+            <select id="g1-unit">
+              <option value="">-- Eenheid --</option>
+              <option value="V">V (Volt)</option>
+              <option value="A">A (Ampère)</option>
+              <option value="W">W (Watt)</option>
+            </select>
+          </div>
+          <div class="step-row">
+            <span>Gegeven 2:</span>
+            <input type="number" id="g2-val" step="any" placeholder="Getal">
+            <select id="g2-unit">
+              <option value="">-- Eenheid --</option>
+              <option value="V">V (Volt)</option>
+              <option value="A">A (Ampère)</option>
+              <option value="W">W (Watt)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- G2 - Gevraagd -->
+        <div class="step-card">
+          <div class="step-title"><span class="step-badge">G</span> Gevraagd (antwoord-eenheid)</div>
+          <div class="step-row">
+            <span>Gevraagde eenheid:</span>
+            <select id="gevraagd-unit">
+              <option value="">-- Kies eenheid --</option>
+              <option value="W">W (Watt voor Vermogen P)</option>
+              <option value="V">V (Volt voor Spanning U)</option>
+              <option value="A">A (Ampère voor Stroomsterkte I)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- F - Formule -->
+        <div class="step-card">
+          <div class="step-title"><span class="step-badge">F</span> Formule</div>
+          <div class="step-row">
+            <span>Kies de juiste formule:</span>
+            <select id="select-formula">
+              <option value="">-- Kies formule --</option>
+              <option value="P=U*I">P = U &times; I</option>
+              <option value="U=P/I">U = P / I</option>
+              <option value="I=P/U">I = P / U</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- I - Invullen -->
+        <div class="step-card">
+          <div class="step-title"><span class="step-badge">I</span> Invullen</div>
+          <div class="step-row">
+            <span>Berekening:</span>
+            <input type="number" id="invul-val1" step="any" placeholder="Getal 1">
+            <span id="invul-op">&times; / &divide;</span>
+            <input type="number" id="invul-val2" step="any" placeholder="Getal 2">
+          </div>
+        </div>
+
+        <!-- R & E - Rekenen & Eenheid -->
+        <div class="step-card">
+          <div class="step-title"><span class="step-badge">R &amp; E</span> Rekenen &amp; Eenheid</div>
+          <div class="step-row">
+            <span>Eindantwoord:</span>
+            <input type="number" id="final-ans" step="any" placeholder="Getal">
+            <select id="final-unit">
+              <option value="">-- Eenheid --</option>
+              <option value="W">W (Watt)</option>
+              <option value="V">V (Volt)</option>
+              <option value="A">A (Ampère)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="btn-primary" id="btn-check" onclick="checkGGFIRE()">Controleer GGFIRE</button>
+        <button class="btn-warning" id="btn-retry" onclick="retryQuestion()" style="display: none;">Probeer het nog eens</button>
+        <button class="btn-success" id="btn-next" onclick="nextQuestion()" style="display: none;">Volgende Som</button>
+        <button class="btn-secondary" id="btn-hint" onclick="toggleHint()">Tip?</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="hint-box" id="hint-box">
+        <strong>Didactische tip (Goudgetallen):</strong><br>
+        Onthoud de verhouding: <div class="example-math">6 = 2 &times; 3</div> (P = U &times; I)<br>
+        <span id="hint-explanation"></span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentQuestion = {};
+    let score = { correct: 0, wrong: 0 };
+    let attempts = 0;
+
+    const names = ['Anass', 'Lisa', 'Milan', 'Sophie', 'Daan', 'Emma', 'Lars', 'Noa', 'Tim', 'Tess'];
+    const items = [
+      { name: 'een waterkoker', U: 230, I: 8.0, P: 1840 },
+      { name: 'een game-PC', U: 230, I: 2.5, P: 575 },
+      { name: 'een zaklamp', U: 4.5, I: 0.4, P: 1.8 },
+      { name: 'een USB-lader', U: 5.0, I: 2.0, P: 10.0 },
+      { name: 'een magnetron', U: 230, I: 4.0, P: 920 }
+    ];
+
+    const targets = ['P', 'U', 'I'];
+
+    function generateQuestion() {
+      attempts = 0;
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('hint-box').style.display = 'none';
+
+      document.getElementById('btn-check').style.display = 'inline-block';
+      document.getElementById('btn-retry').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'none';
+
+      // Reset alle invoervelden
+      const allInputs = document.querySelectorAll('input, select');
+      allInputs.forEach(el => {
+        el.value = '';
+        el.disabled = false;
+        el.className = '';
+      });
+
+      const name = names[Math.floor(Math.random() * names.length)];
+      const item = items[Math.floor(Math.random() * items.length)];
+      const target = targets[Math.floor(Math.random() * targets.length)];
+
+      if (target === 'P') {
+        currentQuestion = {
+          text: `${name} gebruikt ${item.name}. De spanning is <strong>${item.U} V</strong> en de stroomsterkte is <strong>${item.I} A</strong>.<br><br>Bereken het vermogen (P).`,
+          target: 'P',
+          g1: { val: item.U, unit: 'V' },
+          g2: { val: item.I, unit: 'A' },
+          askedUnit: 'W',
+          formula: 'P=U*I',
+          invul1: item.U,
+          invul2: item.I,
+          opSymbol: '&times;',
+          ans: item.P,
+          ansUnit: 'W',
+          hint: 'Je zoekt <b>P</b> (het getal 6). Met 2 en 3 doe je 2 &times; 3. Dus: <b>P = U &times; I</b>'
+        };
+      } else if (target === 'U') {
+        currentQuestion = {
+          text: `${name} test ${item.name}. Het vermogen is <strong>${item.P} W</strong> en de stroomsterkte is <strong>${item.I} A</strong>.<br><br>Bereken de spanning (U).`,
+          target: 'U',
+          g1: { val: item.P, unit: 'W' },
+          g2: { val: item.I, unit: 'A' },
+          askedUnit: 'V',
+          formula: 'U=P/I',
+          invul1: item.P,
+          invul2: item.I,
+          opSymbol: '&divide;',
+          ans: item.U,
+          ansUnit: 'V',
+          hint: 'Je zoekt <b>U</b> (het getal 2). Met 6 en 3 doe je 6 / 3. Dus: <b>U = P / I</b>'
+        };
+      } else {
+        currentQuestion = {
+          text: `${name} sluit ${item.name} aan op <strong>${item.U} V</strong>. Het apparaat levert <strong>${item.P} W</strong>.<br><br>Bereken de stroomsterkte (I).`,
+          target: 'I',
+          g1: { val: item.U, unit: 'V' },
+          g2: { val: item.P, unit: 'W' },
+          askedUnit: 'A',
+          formula: 'I=P/U',
+          invul1: item.P,
+          invul2: item.U,
+          opSymbol: '&divide;',
+          ans: item.I,
+          ansUnit: 'A',
+          hint: 'Je zoekt <b>I</b> (het getal 3). Met 6 en 2 doe je 6 / 2. Dus: <b>I = P / U</b>'
+        };
+      }
+
+      document.getElementById('story-text').innerHTML = currentQuestion.text;
+      document.getElementById('invul-op').innerHTML = currentQuestion.opSymbol;
+    }
+
+    function checkGGFIRE() {
+      const g1Val = parseFloat(document.getElementById('g1-val').value);
+      const g1Unit = document.getElementById('g1-unit').value;
+      const g2Val = parseFloat(document.getElementById('g2-val').value);
+      const g2Unit = document.getElementById('g2-unit').value;
+      const gevraagdUnit = document.getElementById('gevraagd-unit').value;
+
+      const formula = document.getElementById('select-formula').value;
+      const invul1 = parseFloat(document.getElementById('invul-val1').value);
+      const invul2 = parseFloat(document.getElementById('invul-val2').value);
+
+      const finalAns = parseFloat(document.getElementById('final-ans').value);
+      const finalUnit = document.getElementById('final-unit').value;
+
+      const feedbackEl = document.getElementById('feedback');
+
+      if (isNaN(g1Val) || !g1Unit || isNaN(g2Val) || !g2Unit || !gevraagdUnit || !formula || isNaN(invul1) || isNaN(invul2) || isNaN(finalAns) || !finalUnit) {
+        alert('Vul alle stappen van de GGFIRE in voordat je controleert!');
+        return;
+      }
+
+      attempts++;
+
+      // Controleer Gegeven (mag in willekeurige volgorde 1 of 2 ingevuld zijn)
+      const checkG1Direct = (Math.abs(g1Val - currentQuestion.g1.val) < 0.11 && g1Unit === currentQuestion.g1.unit && Math.abs(g2Val - currentQuestion.g2.val) < 0.11 && g2Unit === currentQuestion.g2.unit);
+      const checkG1Swapped = (Math.abs(g1Val - currentQuestion.g2.val) < 0.11 && g1Unit === currentQuestion.g2.unit && Math.abs(g2Val - currentQuestion.g1.val) < 0.11 && g2Unit === currentQuestion.g1.unit);
+      const isGegevenCorrect = checkG1Direct || checkG1Swapped;
+
+      // Controleer Gevraagd
+      const isGevraagdCorrect = (gevraagdUnit === currentQuestion.askedUnit);
+
+      // Controleer Formule
+      const isFormulaCorrect = (formula === currentQuestion.formula);
+
+      // Controleer Invullen (mag in vermenigvuldiging ook gewisseld zijn)
+      let isInvulCorrect = false;
+      if (currentQuestion.formula === 'P=U*I') {
+        isInvulCorrect = (Math.abs(invul1 - currentQuestion.invul1) < 0.11 && Math.abs(invul2 - currentQuestion.invul2) < 0.11) ||
+                         (Math.abs(invul1 - currentQuestion.invul2) < 0.11 && Math.abs(invul2 - currentQuestion.invul1) < 0.11);
+      } else {
+        isInvulCorrect = (Math.abs(invul1 - currentQuestion.invul1) < 0.11 && Math.abs(invul2 - currentQuestion.invul2) < 0.11);
+      }
+
+      // Controleer Rekenen & Eenheid
+      const isAnsCorrect = Math.abs(finalAns - currentQuestion.ans) < 0.15;
+      const isUnitCorrect = (finalUnit === currentQuestion.ansUnit);
+
+      const allCorrect = isGegevenCorrect && isGevraagdCorrect && isFormulaCorrect && isInvulCorrect && isAnsCorrect && isUnitCorrect;
+
+      if (allCorrect) {
+        document.querySelectorAll('input, select').forEach(el => {
+          el.disabled = true;
+          el.className = 'input-correct';
+        });
+
+        feedbackEl.innerHTML = `<strong>Uitstekend gedaan!</strong><br>Alle GGFIRE-stappen (Gegeven, Gevraagd, Formule, Invullen, Rekenen &amp; Eenheid) zijn 100% correct!`;
+        feedbackEl.className = 'feedback correct';
+
+        score.correct++;
+        document.getElementById('score-correct').innerText = score.correct;
+
+        document.getElementById('btn-check').style.display = 'none';
+        document.getElementById('btn-retry').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'inline-block';
+      } else {
+        let errors = [];
+        if (!isGegevenCorrect) errors.push('<b>G (Gegeven):</b> Controleer de twee getallen en hun eenheden uit de tekst.');
+        if (!isGevraagdCorrect) errors.push('<b>G (Gevraagd):</b> Je hebt niet de juiste gevraagde eenheid gekozen.');
+        if (!isFormulaCorrect) errors.push('<b>F (Formule):</b> De gekozen formule is niet juist.');
+        if (!isInvulCorrect) errors.push('<b>I (Invullen):</b> De ingevulde getallen in de berekening kloppen niet.');
+        if (!isAnsCorrect || !isUnitCorrect) errors.push('<b>R &amp; E (Rekenen &amp; Eenheid):</b> De uitkomst of de eind-eenheid is niet juist.');
+
+        if (attempts === 1) {
+          feedbackEl.innerHTML = `<strong>Niet helemaal juist. Bekijk je foutjes:</strong><br>` + errors.join('<br>');
+          feedbackEl.className = 'feedback wrong';
+
+          document.getElementById('btn-check').style.display = 'none';
+          document.getElementById('btn-retry').style.display = 'inline-block';
+
+          document.getElementById('hint-explanation').innerHTML = currentQuestion.hint;
+          document.getElementById('hint-box').style.display = 'block';
+        } else {
+          document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+          feedbackEl.innerHTML = `<strong>Helaas, ook de 2e poging was niet juist.</strong><br>Juiste uitkomst: <strong>${currentQuestion.ans} ${currentQuestion.ansUnit}</strong>.`;
+          feedbackEl.className = 'feedback wrong';
+
+          score.wrong++;
+          document.getElementById('score-wrong').innerText = score.wrong;
+
+          document.getElementById('btn-retry').style.display = 'none';
+          document.getElementById('btn-next').style.display = 'inline-block';
+        }
+      }
+    }
+
+    function retryQuestion() {
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('btn-retry').style.display = 'none';
+      document.getElementById('btn-check').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      generateQuestion();
+    }
+
+    function toggleHint() {
+      const hintBox = document.getElementById('hint-box');
+      document.getElementById('hint-explanation').innerHTML = currentQuestion.hint;
+
+      if (hintBox.style.display === 'none' || hintBox.style.display === '') {
+        hintBox.style.display = 'block';
+      } else {
+        hintBox.style.display = 'none';
+      }
+    }
+
+    generateQuestion();
+  </script>
+
+</body>
+</html>
