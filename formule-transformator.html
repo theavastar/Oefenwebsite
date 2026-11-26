@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transformator Oefentool — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #2563eb;
+      --tile-bg: #dbeafe;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Centreer de oefenkaart op het scherm */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.35rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .formula-box {
+      background: var(--tile-bg);
+      color: #1e40af;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* CSS voor de visuele breukstreep */
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .numerator {
+      border-bottom: 2px solid currentColor;
+      padding-bottom: 2px;
+      margin-bottom: 2px;
+    }
+
+    .denominator {
+      padding-top: 2px;
+    }
+
+    .question {
+      font-size: 0.98rem;
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+      text-align: left;
+      background-color: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+      min-height: 85px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    input[type="number"] {
+      padding: 0.65rem;
+      font-size: 1rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      width: 130px;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--tile-color);
+    }
+
+    input[type="number"].input-correct {
+      border-color: var(--success) !important;
+      background-color: #ecfdf5 !important;
+      font-weight: 700;
+      color: #065f46;
+    }
+
+    input[type="number"].input-wrong {
+      border-color: var(--danger) !important;
+      background-color: #fef2f2 !important;
+      font-weight: 700;
+      color: #991b1b;
+    }
+
+    .unit {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.65rem 1.1rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary { background: var(--tile-color); color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #64748b; color: white; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-warning { background: var(--warning); color: white; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; }
+
+    .feedback {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .feedback.correct { display: block; background: #d1fae5; color: #065f46; }
+    .feedback.wrong { display: block; background: #fee2e2; color: #991b1b; }
+
+    .hint-box {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.9rem;
+      background: #fffbeb;
+      color: #92400e;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      text-align: left;
+      border-left: 4px solid var(--warning);
+    }
+
+    .example-math {
+      font-family: inherit;
+      background: #fef3c7;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0.35rem 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <span class="category-tag">Formules oefenen</span>
+      <h1>Transformator Oefentool</h1>
+
+      <div class="score-board">
+        <span>Goed: <span id="score-correct" style="color: var(--success)">0</span></span>
+        <span>Fout: <span id="score-wrong" style="color: var(--danger)">0</span></span>
+      </div>
+
+      <div class="formula-box">
+        Formule:
+        <div class="fraction">
+          <span class="numerator">N<sub>p</sub></span>
+          <span class="denominator">N<sub>s</sub></span>
+        </div>
+        =
+        <div class="fraction">
+          <span class="numerator">U<sub>p</sub></span>
+          <span class="denominator">U<sub>s</sub></span>
+        </div>
+      </div>
+
+      <div class="question" id="question-text">Vraag wordt geladen...</div>
+
+      <div class="input-group">
+        <input type="number" id="user-answer" step="any" placeholder="Antwoord">
+        <span id="unit-label" class="unit">-</span>
+      </div>
+
+      <div class="button-row">
+        <button class="btn-primary" id="btn-check" onclick="checkAnswer()">Controleer</button>
+        <button class="btn-warning" id="btn-retry" onclick="retryQuestion()" style="display: none;">Probeer het nog eens</button>
+        <button class="btn-success" id="btn-next" onclick="nextQuestion()" style="display: none;">Volgende vraag</button>
+        <button class="btn-secondary" id="btn-hint" onclick="toggleHint()">Tip?</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="hint-box" id="hint-box">
+        <strong>Verhouding omschrijven:</strong><br>
+        Vergelijk het met twee gelijke breuken:<br>
+        <div class="example-math">
+          <div class="fraction"><span class="numerator">6</span><span class="denominator">2</span></div>
+          =
+          <div class="fraction"><span class="numerator">12</span><span class="denominator">4</span></div>
+        </div>
+        <br>
+        <span id="hint-explanation"></span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentQuestion = {};
+    let score = { correct: 0, wrong: 0 };
+    let attempts = 0;
+
+    const questionTypes = ['Np', 'Ns', 'Up', 'Us'];
+
+    function generateQuestion() {
+      attempts = 0;
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('hint-box').style.display = 'none';
+
+      const inputField = document.getElementById('user-answer');
+      inputField.value = '';
+      inputField.disabled = false;
+      inputField.className = '';
+
+      document.getElementById('btn-check').style.display = 'inline-block';
+      document.getElementById('btn-retry').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'none';
+
+      const factors = [2, 3, 4, 5, 10, 20];
+      const factor = factors[Math.floor(Math.random() * factors.length)];
+      const stepUp = Math.random() > 0.5;
+
+      let Np, Ns, Up, Us;
+
+      if (stepUp) {
+        Np = Math.floor(Math.random() * 5 + 2) * 50;
+        Ns = Np * factor;
+        Up = Math.floor(Math.random() * 4 + 1) * 6;
+        Us = Up * factor;
+      } else {
+        Ns = Math.floor(Math.random() * 5 + 2) * 50;
+        Np = Ns * factor;
+        Us = Math.floor(Math.random() * 4 + 1) * 6;
+        Up = Us * factor;
+      }
+
+      const type = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+
+      if (type === 'Np') {
+        currentQuestion = {
+          text: `Een transformator heeft <strong>${Ns} secundaire windingen</strong>. De primaire spanning is <strong>${Up} V</strong> en de secundaire spanning is <strong>${Us} V</strong>.<br><br>Bereken het aantal primaire windingen (N<sub>p</sub>).`,
+          answer: Np,
+          unit: 'windingen',
+          hint: `Met kruislings vermenigvuldigen geldt:<br><b>N<sub>p</sub> &times; U<sub>s</sub> = N<sub>s</sub> &times; U<sub>p</sub></b><br><br>Dus: <b>N<sub>p</sub> = <div class="fraction"><span class="numerator">N<sub>s</sub> &times; U<sub>p</sub></span><span class="denominator">U<sub>s</sub></span></div></b>`
+        };
+      } else if (type === 'Ns') {
+        currentQuestion = {
+          text: `Een transformator heeft <strong>${Np} primaire windingen</strong>. De primaire spanning is <strong>${Up} V</strong> en de secundaire spanning is <strong>${Us} V</strong>.<br><br>Bereken het aantal secundaire windingen (N<sub>s</sub>).`,
+          answer: Ns,
+          unit: 'windingen',
+          hint: `Met kruislings vermenigvuldigen geldt:<br><b>N<sub>s</sub> &times; U<sub>p</sub> = N<sub>p</sub> &times; U<sub>s</sub></b><br><br>Dus: <b>N<sub>s</sub> = <div class="fraction"><span class="numerator">N<sub>p</sub> &times; U<sub>s</sub></span><span class="denominator">U<sub>p</sub></span></div></b>`
+        };
+      } else if (type === 'Up') {
+        currentQuestion = {
+          text: `Een transformator heeft <strong>${Np} primaire</strong> en <strong>${Ns} secundaire windingen</strong>. De secundaire spanning is <strong>${Us} V</strong>.<br><br>Bereken de primaire spanning (U<sub>p</sub>) in Volt.`,
+          answer: Up,
+          unit: 'V',
+          hint: `De verhouding van de spanning is gelijk aan die van de windingen:<br><b>U<sub>p</sub> = <div class="fraction"><span class="numerator">N<sub>p</sub> &times; U<sub>s</sub></span><span class="denominator">N<sub>s</sub></span></div></b>`
+        };
+      } else {
+        currentQuestion = {
+          text: `Een transformator heeft <strong>${Np} primaire</strong> en <strong>${Ns} secundaire windingen</strong>. De primaire spanning is <strong>${Up} V</strong>.<br><br>Bereken de secundaire spanning (U<sub>s</sub>) in Volt.`,
+          answer: Us,
+          unit: 'V',
+          hint: `De verhouding van de spanning is gelijk aan die van de windingen:<br><b>U<sub>s</sub> = <div class="fraction"><span class="numerator">N<sub>s</sub> &times; U<sub>p</sub></span><span class="denominator">N<sub>p</sub></span></div></b>`
+        };
+      }
+
+      document.getElementById('question-text').innerHTML = currentQuestion.text;
+      document.getElementById('unit-label').innerText = currentQuestion.unit;
+    }
+
+    function checkAnswer() {
+      const inputField = document.getElementById('user-answer');
+      const userAns = parseFloat(inputField.value);
+      const feedbackEl = document.getElementById('feedback');
+
+      if (isNaN(userAns)) {
+        alert('Vul eerst een getal in!');
+        return;
+      }
+
+      attempts++;
+      const isCorrect = Math.abs(userAns - currentQuestion.answer) < 0.11;
+
+      if (isCorrect) {
+        inputField.disabled = true;
+        inputField.className = 'input-correct';
+        feedbackEl.innerText = `Goed gedaan! Het antwoord is ${currentQuestion.answer} ${currentQuestion.unit}.`;
+        feedbackEl.className = 'feedback correct';
+
+        score.correct++;
+        document.getElementById('score-correct').innerText = score.correct;
+
+        document.getElementById('btn-check').style.display = 'none';
+        document.getElementById('btn-retry').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'inline-block';
+      } else {
+        if (attempts === 1) {
+          inputField.className = 'input-wrong';
+          feedbackEl.innerText = 'Niet helemaal juist. Kijk goed naar de verhoudingstip en probeer het nog een keer!';
+          feedbackEl.className = 'feedback wrong';
+
+          document.getElementById('btn-check').style.display = 'none';
+          document.getElementById('btn-retry').style.display = 'inline-block';
+
+          document.getElementById('hint-explanation').innerHTML = currentQuestion.hint;
+          document.getElementById('hint-box').style.display = 'block';
+        } else {
+          inputField.disabled = true;
+          inputField.className = 'input-wrong';
+          feedbackEl.innerText = `Helaas, ook de tweede poging was niet juist. Het juiste antwoord was ${currentQuestion.answer} ${currentQuestion.unit}.`;
+          feedbackEl.className = 'feedback wrong';
+
+          score.wrong++;
+          document.getElementById('score-wrong').innerText = score.wrong;
+
+          document.getElementById('btn-retry').style.display = 'none';
+          document.getElementById('btn-next').style.display = 'inline-block';
+        }
+      }
+    }
+
+    function retryQuestion() {
+      const inputField = document.getElementById('user-answer');
+      inputField.className = '';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('btn-retry').style.display = 'none';
+      document.getElementById('btn-check').style.display = 'inline-block';
+      inputField.focus();
+    }
+
+    function nextQuestion() {
+      generateQuestion();
+    }
+
+    function toggleHint() {
+      const hintBox = document.getElementById('hint-box');
+      document.getElementById('hint-explanation').innerHTML = currentQuestion.hint;
+
+      if (hintBox.style.display === 'none' || hintBox.style.display === '') {
+        hintBox.style.display = 'block';
+      } else {
+        hintBox.style.display = 'none';
+      }
+    }
+
+    document.getElementById('user-answer').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        if (document.getElementById('btn-check').style.display !== 'none') {
+          checkAnswer();
+        } else if (document.getElementById('btn-retry').style.display !== 'none') {
+          retryQuestion();
+        } else if (document.getElementById('btn-next').style.display !== 'none') {
+          nextQuestion();
+        }
+      }
+    });
+
+    generateQuestion();
+  </script>
+
+</body>
+</html>
