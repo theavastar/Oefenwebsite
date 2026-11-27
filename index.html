@@ -11,7 +11,8 @@
       --card-bg: #ffffff;
       --text-main: #1e293b;
       --text-muted: #64748b;
-      --tile-formules: #2563eb;
+      --tile-elektra: #2563eb;
+      --tile-formules: #0284c7;
       --tile-ggfire: #059669;
       --tile-eenheden: #d97706;
     }
@@ -96,16 +97,16 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
 
-    /* Hoofdcontainer met 3 tegels naast elkaar */
+    /* Hoofdcontainer met 4 tegels in een 2x2 raster */
     main {
-      max-width: 1150px;
+      max-width: 1100px;
       margin: 2.25rem auto;
       padding: 0 1.5rem 3rem;
     }
 
     .tiles-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
       align-items: start;
     }
@@ -144,8 +145,11 @@
       flex-shrink: 0;
     }
 
+    .tile--elektra { border-top: 4px solid var(--tile-elektra); }
+    .tile--elektra .tile-icon { background-color: #dbeafe; color: var(--tile-elektra); }
+
     .tile--formules { border-top: 4px solid var(--tile-formules); }
-    .tile--formules .tile-icon { background-color: #dbeafe; color: var(--tile-formules); }
+    .tile--formules .tile-icon { background-color: #e0f2fe; color: var(--tile-formules); }
 
     .tile--ggfire { border-top: 4px solid var(--tile-ggfire); }
     .tile--ggfire .tile-icon { background-color: #d1fae5; color: var(--tile-ggfire); }
@@ -230,7 +234,7 @@
     }
 
     /* Responsive weergave voor tablets en telefoons */
-    @media (max-width: 900px) {
+    @media (max-width: 820px) {
       .tiles-grid {
         grid-template-columns: 1fr;
         max-width: 560px;
@@ -258,8 +262,8 @@
       <div class="filter-group" id="theme-filters">
         <span class="filter-label">Thema:</span>
         <button class="filter-btn active" data-theme="alle">Alle thema's</button>
-        <button class="filter-btn" data-theme="stoffen">Stoffen &amp; Dichtheid</button>
         <button class="filter-btn" data-theme="elektriciteit">Elektriciteit</button>
+        <button class="filter-btn" data-theme="stoffen">Stoffen &amp; Dichtheid</button>
         <button class="filter-btn" data-theme="kracht">Kracht &amp; Beweging</button>
         <button class="filter-btn" data-theme="algemeen">Algemeen &amp; Straling</button>
       </div>
@@ -269,31 +273,13 @@
   <main>
     <div class="tiles-grid">
 
-      <!-- TEGEL 1: FORMULES OEFENEN -->
-      <section class="tile tile--formules" data-tile-category="formules">
+      <!-- TEGEL 1: FORMULES — ELEKTRICITEIT -->
+      <section class="tile tile--elektra" data-tile-category="formules">
         <div class="tile-header">
-          <div class="tile-icon">ƒ(x)</div>
-          <h2>Formules oefenen</h2>
+          <div class="tile-icon">⚡</div>
+          <h2>Formules: Elektriciteit</h2>
         </div>
         <ul class="exercise-list">
-          <li class="exercise-item" data-theme="stoffen">
-            <a href="formule-dichtheid.html" class="exercise-link">
-              <div class="exercise-info">
-                <span>Dichtheid (ρ = m / V)</span>
-                <span class="theme-badge">Stoffen &amp; Dichtheid</span>
-              </div>
-              <span class="arrow">→</span>
-            </a>
-          </li>
-          <li class="exercise-item" data-theme="kracht">
-            <a href="formule-snelheid.html" class="exercise-link">
-              <div class="exercise-info">
-                <span>Snelheid (v = s / t)</span>
-                <span class="theme-badge">Kracht &amp; Beweging</span>
-              </div>
-              <span class="arrow">→</span>
-            </a>
-          </li>
           <li class="exercise-item" data-theme="elektriciteit">
             <a href="formule-vermogen.html" class="exercise-link">
               <div class="exercise-info">
@@ -339,6 +325,34 @@
               <span class="arrow">→</span>
             </a>
           </li>
+        </ul>
+      </section>
+
+      <!-- TEGEL 2: FORMULES — STOFFEN, KRACHT & GOLVEN -->
+      <section class="tile tile--formules" data-tile-category="formules">
+        <div class="tile-header">
+          <div class="tile-icon">ƒ(x)</div>
+          <h2>Formules: Stoffen, Kracht &amp; Golven</h2>
+        </div>
+        <ul class="exercise-list">
+          <li class="exercise-item" data-theme="stoffen">
+            <a href="formule-dichtheid.html" class="exercise-link">
+              <div class="exercise-info">
+                <span>Dichtheid (ρ = m / V)</span>
+                <span class="theme-badge">Stoffen &amp; Dichtheid</span>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+          </li>
+          <li class="exercise-item" data-theme="kracht">
+            <a href="formule-snelheid.html" class="exercise-link">
+              <div class="exercise-info">
+                <span>Snelheid (v = s / t)</span>
+                <span class="theme-badge">Kracht &amp; Beweging</span>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+          </li>
           <li class="exercise-item" data-theme="algemeen">
             <a href="formule-frequentie.html" class="exercise-link">
               <div class="exercise-info">
@@ -351,27 +365,27 @@
         </ul>
       </section>
 
-      <!-- TEGEL 2: FORMULEGEBRUIK MET GGFIRE -->
+      <!-- TEGEL 3: FORMULEGEBRUIK MET GGFIRE -->
       <section class="tile tile--ggfire" data-tile-category="ggfire">
         <div class="tile-header">
           <div class="tile-icon">✓</div>
           <h2>Formulegebruik met GGFIRE</h2>
         </div>
         <ul class="exercise-list">
-          <li class="exercise-item" data-theme="elektriciteit">
-            <a href="ggfire-vermogen.html" class="exercise-link">
-              <div class="exercise-info">
-                <span>GGFIRE: Vermogen (P = U × I)</span>
-                <span class="theme-badge">Elektriciteit</span>
-              </div>
-              <span class="arrow">→</span>
-            </a>
-          </li>
           <li class="exercise-item" data-theme="stoffen">
             <a href="ggfire-dichtheid.html" class="exercise-link">
               <div class="exercise-info">
                 <span>GGFIRE: Dichtheid (ρ = m / V)</span>
                 <span class="theme-badge">Stoffen &amp; Dichtheid</span>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+          </li>
+          <li class="exercise-item" data-theme="elektriciteit">
+            <a href="ggfire-vermogen.html" class="exercise-link">
+              <div class="exercise-info">
+                <span>GGFIRE: Vermogen (P = U × I)</span>
+                <span class="theme-badge">Elektriciteit</span>
               </div>
               <span class="arrow">→</span>
             </a>
@@ -397,7 +411,7 @@
         </ul>
       </section>
 
-      <!-- TEGEL 3: EENHEDEN OMREKENEN -->
+      <!-- TEGEL 4: EENHEDEN OMREKENEN -->
       <section class="tile tile--eenheden" data-tile-category="eenheden">
         <div class="tile-header">
           <div class="tile-icon">⇄</div>
@@ -408,15 +422,6 @@
             <a href="eenheden-omrekenen.html" class="exercise-link">
               <div class="exercise-info">
                 <span>Eenheden omrekenen (Basis &amp; Grootheden)</span>
-                <span class="theme-badge">Algemeen &amp; Straling</span>
-              </div>
-              <span class="arrow">→</span>
-            </a>
-          </li>
-          <li class="exercise-item" data-theme="algemeen">
-            <a href="eenheden-niveau3.html" class="exercise-link">
-              <div class="exercise-info">
-                <span>Eenheden omrekenen — Niveau 3</span>
                 <span class="theme-badge">Algemeen &amp; Straling</span>
               </div>
               <span class="arrow">→</span>
