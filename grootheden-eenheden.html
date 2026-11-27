@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grootheden &amp; Eenheden — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #0284c7;
+      --tile-bg: #e0f2fe;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-soft: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Natuurkundige typografie: grootheden cursief, eenheden rechtop */
+    .sym-grootheid {
+      font-family: 'Times New Roman', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .sym-eenheid {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Hoofdcontainer */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1.5rem 1rem 2.5rem;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 920px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Kaart-header met titel, niveau en geluid */
+    .card-header {
+      padding: 1.35rem 1.5rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-header h1 {
+      font-size: 1.45rem;
+      color: var(--text-main);
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .level-switch {
+      display: inline-flex;
+      background-color: #f1f5f9;
+      padding: 0.25rem;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+    }
+
+    .level-btn {
+      border: none;
+      background: transparent;
+      padding: 0.4rem 0.85rem;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .level-btn:hover {
+      color: var(--text-main);
+    }
+
+    .level-btn.active {
+      background-color: #ffffff;
+      color: var(--tile-color);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sound-btn {
+      background-color: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.45rem 0.65rem;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      transition: background-color 0.15s ease;
+    }
+
+    .sound-btn:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* Tabbladen */
+    .tabs-nav {
+      display: flex;
+      overflow-x: auto;
+      background-color: var(--bg-soft);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      gap: 0.35rem;
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      color: var(--tile-color);
+      border-bottom-color: var(--tile-color);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Animaties */
+    @keyframes pop {
+      0% { transform: scale(0.96); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    .animate-pop {
+      animation: pop 0.22s ease-out;
+    }
+
+    .animate-shake {
+      animation: shake 0.38s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    /* --- SECTIE 1: MEERKEUZE QUIZ --- */
+    .progress-box {
+      background-color: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .progress-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.88rem;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background-color: var(--tile-bg);
+      color: var(--tile-color);
+    }
+
+    .badge-warn {
+      background-color: #fef3c7;
+      color: #b45309;
+      margin-left: 0.35rem;
+    }
+
+    .stats-inline {
+      display: flex;
+      gap: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background-color: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--tile-color);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .q-type {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+    }
+
+    .q-level {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .q-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .opt-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-align: left;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background-color: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      border-color: var(--tile-color);
+      background-color: #f0f9ff;
+    }
+
+    .opt-btn:disabled {
+      cursor: default;
+    }
+
+    .opt-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background-color: #f1f5f9;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .opt-btn.opt-correct {
+      border-color: var(--success);
+      background-color: #ecfdf5;
+      color: #065f46;
+    }
+
+    .opt-btn.opt-correct .opt-letter {
+      background-color: var(--success);
+      color: #ffffff;
+    }
+
+    .opt-btn.opt-wrong {
+      border-color: var(--danger);
+      background-color: #fef2f2;
+      color: #991b1b;
+    }
+
+    .opt-btn.opt-wrong .opt-letter {
+      background-color: var(--danger);
+      color: #ffffff;
+    }
+
+    .opt-btn.opt-dimmed {
+      opacity: 0.5;
+    }
+
+    .feedback-box {
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .feedback-box.correct {
+      background-color: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .feedback-box.wrong {
+      background-color: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .fb-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feedback-box.correct .fb-badge { background-color: var(--success); }
+    .feedback-box.wrong .fb-badge { background-color: var(--danger); }
+
+    .fb-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .fb-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 9px;
+      border: none;
+      background-color: var(--tile-color);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #0369a1;
+    }
+
+    .btn-warning {
+      background-color: var(--warning);
+    }
+
+    .btn-warning:hover {
+      background-color: #d97706;
+    }
+
+    .actions-right {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Eindscherm Quiz */
+    .summary-header {
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .summary-trophy {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-header h2 {
+      font-size: 1.55rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .summary-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      max-width: 540px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .stat-tile {
+      background-color: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem;
+      text-align: center;
+    }
+
+    .stat-tile-lbl {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-tile-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+    }
+
+    .mistakes-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .mistakes-box h3 {
+      font-size: 0.98rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+    }
+
+    .mistakes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 640px) {
+      .mistakes-grid { grid-template-columns: 1fr; }
+    }
+
+    .mistake-item {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 9px;
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mistake-item-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .mistake-item-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .summary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    /* --- SECTIE 2: KOPPELSPEL --- */
+    .match-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      background-color: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .match-select {
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+
+    .match-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .match-stats span strong {
+      color: var(--text-main);
+    }
+
+    .match-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .match-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .match-card {
+      padding: 0.85rem 1rem;
+      border-radius: 9px;
+      border: 2px solid var(--border);
+      background-color: #ffffff;
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 52px;
+    }
+
+    .match-card.right-card {
+      justify-content: center;
+    }
+
+    .match-card:hover:not(:disabled) {
+      border-color: var(--tile-color);
+      background-color: #f0f9ff;
+    }
+
+    .match-card.selected-left {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+    }
+
+    .match-card.selected-right {
+      border-color: #0d9488;
+      background-color: #f0fdfa;
+    }
+
+    .match-card.matched {
+      border-color: var(--success);
+      background-color: #ecfdf5;
+      color: #065f46;
+      opacity: 0.75;
+      cursor: default;
+    }
+
+    .match-card.wrong-pair {
+      border-color: var(--danger);
+      background-color: #fef2f2;
+    }
+
+    .sym-chip {
+      font-size: 0.78rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      background-color: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .win-banner {
+      margin-top: 1.25rem;
+      background-color: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .win-banner h3 {
+      color: #065f46;
+      margin-bottom: 0.3rem;
+    }
+
+    .win-banner p {
+      color: #047857;
+      font-size: 0.92rem;
+      margin-bottom: 0.9rem;
+    }
+
+    /* --- SECTIE 3: EENHEDEN AFLEIDEN --- */
+    .derive-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .formula-banner {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 1.35rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .formula-banner-label {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .formula-banner-eq {
+      font-size: 1.85rem;
+      font-weight: 700;
+      padding: 0.65rem;
+      background-color: rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      margin-bottom: 0.65rem;
+    }
+
+    .formula-banner-givens {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+
+    .derive-opt {
+      justify-content: center;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.08rem;
+    }
+
+    /* --- SECTIE 4: SPIEKBRIEFJE --- */
+    .tips-callout {
+      background-color: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid var(--warning);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .tips-callout h3 {
+      font-size: 1rem;
+      color: #92400e;
+      margin-bottom: 0.5rem;
+    }
+
+    .tips-callout ul {
+      padding-left: 1.25rem;
+      font-size: 0.88rem;
+      color: #78350f;
+      line-height: 1.55;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .search-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--tile-color);
+    }
+
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    thead th {
+      background-color: var(--bg-soft);
+      padding: 0.75rem 0.9rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody td {
+      padding: 0.75rem 0.9rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .pill-sym-g {
+      display: inline-block;
+      min-width: 30px;
+      text-align: center;
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      background-color: #e0f2fe;
+      color: #0369a1;
+      font-size: 1rem;
+    }
+
+    .pill-sym-e {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      background-color: #ccfbf1;
+      color: #0f766e;
+      font-size: 0.88rem;
+    }
+
+    .pill-lvl {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .pill-lvl.basis {
+      background-color: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .pill-lvl.gevorderd {
+      background-color: #ede9fe;
+      color: #6d28d9;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+
+      <!-- Kaart-header -->
+      <div class="card-header">
+        <div>
+          <span class="category-tag">Basisvaardigheden</span>
+          <h1>Grootheden &amp; Eenheden</h1>
+        </div>
+
+        <div class="controls-group">
+          <div class="level-switch" role="group" aria-label="Niveau selectie">
+            <button id="btn-level-basis" class="level-btn active" onclick="setLevel('basis')">Basis (Onderbouw)</button>
+            <button id="btn-level-gevorderd" class="level-btn" onclick="setLevel('gevorderd')">Gevorderd (Bovenbouw)</button>
+          </div>
+          <button id="btn-sound" class="sound-btn" onclick="toggleSound()" title="Geluid aan/uit">🔊</button>
+        </div>
+      </div>
+
+      <!-- Tabbladen -->
+      <nav class="tabs-nav" aria-label="Oefenonderdelen">
+        <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn active">1. Meerkeuze Quiz</button>
+        <button onclick="switchTab('match')" id="tab-match" class="tab-btn">2. Koppelspel</button>
+        <button onclick="switchTab('derive')" id="tab-derive" class="tab-btn">3. Eenheden Afleiden</button>
+        <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="tab-btn">4. Spiekbriefje &amp; Overzicht</button>
+      </nav>
+
+      <div class="card-body">
+
+        <!-- =========================================================
+             SECTIE 1: MEERKEUZE QUIZ
+             ========================================================= -->
+        <section id="view-quiz">
+          <div class="progress-box">
+            <div class="progress-top">
+              <div>
+                <span id="quiz-round-badge" class="badge-pill">Vraag 1 van 10</span>
+                <span id="quiz-focus-badge" class="badge-pill badge-warn hidden">Herhalingsronde: Aandachtspunten</span>
+              </div>
+              <div class="stats-inline">
+                <span>Score: <strong id="quiz-score" style="color: var(--success);">0</strong></span>
+                <span>🔥 Reeks: <strong id="quiz-streak" style="color: #ea580c;">0</strong></span>
+              </div>
+            </div>
+            <div class="progress-track">
+              <div id="quiz-progress-bar" class="progress-fill" style="width: 10%;"></div>
+            </div>
+          </div>
+
+          <!-- Actieve vraagkaart -->
+          <div id="quiz-active-card">
+            <div class="q-meta">
+              <span id="quiz-type-label" class="q-type">Vraagtype</span>
+              <span id="quiz-level-tag" class="q-level">Niveau: Basis</span>
+            </div>
+
+            <h2 id="quiz-question-text" class="q-text">Laden...</h2>
+
+            <div id="quiz-options-grid" class="options-grid"></div>
+
+            <div id="quiz-feedback-box" class="feedback-box hidden">
+              <div id="quiz-feedback-icon" class="fb-badge"></div>
+              <div>
+                <div id="quiz-feedback-title" class="fb-title"></div>
+                <p id="quiz-feedback-explanation" class="fb-text"></p>
+              </div>
+            </div>
+
+            <div class="actions-right">
+              <button id="btn-quiz-next" onclick="nextQuizQuestion()" class="btn-primary hidden">
+                <span>Volgende vraag</span> →
+              </button>
+            </div>
+          </div>
+
+          <!-- Eindscherm na 10 vragen -->
+          <div id="quiz-summary-card" class="hidden animate-pop">
+            <div class="summary-header">
+              <div id="summary-trophy" class="summary-trophy">🏆</div>
+              <h2>Ronde voltooid!</h2>
+              <p id="summary-subtitle">Je hebt 10 vragen beantwoord.</p>
+            </div>
+
+            <div class="summary-stats">
+              <div class="stat-tile">
+                <div class="stat-tile-lbl">Score</div>
+                <div id="summary-score" class="stat-tile-val" style="color: var(--tile-color);">8/10</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-tile-lbl">Percentage</div>
+                <div id="summary-percentage" class="stat-tile-val" style="color: var(--success);">80%</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-tile-lbl">Beste reeks</div>
+                <div id="summary-best-streak" class="stat-tile-val" style="color: #ea580c;">5</div>
+              </div>
+            </div>
+
+            <div id="summary-mistakes-container" class="mistakes-box">
+              <h3>Begrippen die nog extra aandacht nodig hebben:</h3>
+              <div id="summary-mistakes-list" class="mistakes-grid"></div>
+            </div>
+
+            <div class="summary-actions">
+              <button id="btn-retry-mistakes" onclick="startQuizRound(true)" class="btn-primary btn-warning hidden">
+                Oefen aandachtspunten opnieuw
+              </button>
+              <button onclick="startQuizRound(false)" class="btn-primary">
+                Nieuwe ronde van 10 vragen
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTIE 2: KOPPELSPEL
+             ========================================================= -->
+        <section id="view-match" class="hidden">
+          <div class="match-toolbar">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <select id="match-mode-select" onchange="initMatchGame()" class="match-select">
+                <option value="unit-name">Grootheid ↔ Eenheid (naam)</option>
+                <option value="unit-symbol">Grootheid ↔ Symbool eenheid</option>
+                <option value="quantity-symbol">Grootheid ↔ Symbool grootheid</option>
+              </select>
+              <button onclick="initMatchGame()" class="sound-btn" title="Nieuw bord">↻ Nieuw bord</button>
+            </div>
+
+            <div class="match-stats">
+              <span>Tijd: <strong id="match-timer">00:00</strong></span>
+              <span>Pogingen: <strong id="match-attempts">0</strong></span>
+              <span>Gevonden: <strong id="match-found" style="color: var(--success);">0 / 6</strong></span>
+            </div>
+          </div>
+
+          <div id="match-board" class="match-board">
+            <div id="match-col-left" class="match-col"></div>
+            <div id="match-col-right" class="match-col"></div>
+          </div>
+
+          <div id="match-win-banner" class="win-banner hidden animate-pop">
+            <h3>🎉 Alle 6 paren gekoppeld!</h3>
+            <p id="match-win-stats">Je deed er 24 seconden over in 7 pogingen.</p>
+            <button onclick="initMatchGame()" class="btn-primary" style="background-color: var(--success);">
+              Speel nog een keer
+            </button>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTIE 3: EENHEDEN AFLEIDEN
+             ========================================================= -->
+        <section id="view-derive" class="hidden">
+          <div class="derive-header">
+            <div>
+              <span class="q-type">Formule-puzzel</span>
+              <h2 style="font-size: 1.2rem; margin-top: 0.15rem;">Eenheden afleiden uit formules</h2>
+            </div>
+            <span class="badge-pill">Opgelost: <strong id="derive-score">0</strong></span>
+          </div>
+
+          <div class="formula-banner">
+            <div class="formula-banner-label">Gegeven formule</div>
+            <div id="derive-formula-display" class="formula-banner-eq"></div>
+            <div id="derive-givens" class="formula-banner-givens"></div>
+          </div>
+
+          <h3 id="derive-question-prompt" class="q-text" style="font-size: 1.1rem; margin-bottom: 1rem;">
+            Welke eenheid volgt hieruit?
+          </h3>
+
+          <div id="derive-options-grid" class="options-grid"></div>
+
+          <div id="derive-feedback-box" class="feedback-box hidden">
+            <div id="derive-feedback-icon" class="fb-badge"></div>
+            <div>
+              <div id="derive-feedback-title" class="fb-title"></div>
+              <p id="derive-feedback-text" class="fb-text"></p>
+            </div>
+          </div>
+
+          <div class="actions-right">
+            <button id="btn-derive-next" onclick="nextDerivePuzzle()" class="btn-primary hidden">
+              Volgende formule →
+            </button>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             SECTIE 4: SPIEKBRIEFJE & OVERZICHT
+             ========================================================= -->
+        <section id="view-cheatsheet" class="hidden">
+          <div class="tips-callout">
+            <h3>💡 Gouden regels &amp; veelgemaakte fouten</h3>
+            <ul>
+              <li><strong>Cursief vs. Rechtop:</strong> Het symbool van een <em>grootheid</em> schrijf je <em>cursief</em>, zoals <span class="sym-grootheid">m</span> (massa) of <span class="sym-grootheid">s</span> (afstand). Het symbool van een <strong>eenheid</strong> schrijf je rechtop, zoals <span class="sym-eenheid">m</span> (meter) of <span class="sym-eenheid">s</span> (seconde).</li>
+              <li><strong>Lengte vs. Afstand:</strong> Beide hebben meter (<span class="sym-eenheid">m</span>) als eenheid, maar lengte heeft symbool <span class="sym-grootheid">l</span> (bijv. <span class="sym-grootheid">A</span> = <span class="sym-grootheid">l</span> · <span class="sym-grootheid">b</span>) en afstand heeft symbool <span class="sym-grootheid">s</span> (bijv. <span class="sym-grootheid">s</span> = <span class="sym-grootheid">v</span> · <span class="sym-grootheid">t</span>).</li>
+              <li><strong>Hoofdletters tellen!</strong> Kleine <span class="sym-grootheid">p</span> is druk (in Pa), hoofdletter <span class="sym-grootheid">P</span> is vermogen (in W). Kleine <span class="sym-grootheid">t</span> is tijd (in s), hoofdletter <span class="sym-grootheid">T</span> is temperatuur (in K) of trillingstijd (in s).</li>
+              <li><strong>Dubbele letters:</strong> Let op het verschil tussen grootheid <span class="sym-grootheid">V</span> (volume) en eenheid <span class="sym-eenheid">V</span> (volt, van spanning <span class="sym-grootheid">U</span>), en tussen arbeid <span class="sym-grootheid">W</span> en watt <span class="sym-eenheid">W</span>.</li>
+              <li><strong>Eenheden vernoemd naar personen:</strong> Voluit met kleine letter (newton, volt, joule, ampère), maar het symbool krijgt een <strong>hoofdletter</strong> (<span class="sym-eenheid">N</span>, <span class="sym-eenheid">V</span>, <span class="sym-eenheid">J</span>, <span class="sym-eenheid">A</span>).</li>
+            </ul>
+          </div>
+
+          <div class="search-filter-row">
+            <input type="text" id="cheatsheet-search" class="search-input" oninput="renderCheatsheet()" placeholder="Zoek op grootheid, eenheid, symbool of formule...">
+            <select id="cheatsheet-filter-level" class="match-select" onchange="renderCheatsheet()">
+              <option value="all">Alle niveaus</option>
+              <option value="basis">Alleen Basis (Onderbouw)</option>
+              <option value="gevorderd">Alleen Gevorderd (Bovenbouw)</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Grootheid</th>
+                  <th style="text-align: center;">Symbool grootheid</th>
+                  <th>Eenheid</th>
+                  <th style="text-align: center;">Symbool eenheid</th>
+                  <th>Voorbeeld / Formule</th>
+                  <th style="text-align: right;">Niveau</th>
+                </tr>
+              </thead>
+              <tbody id="cheatsheet-tbody"></tbody>
+            </table>
+          </div>
+          <div id="cheatsheet-empty" class="hidden" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            Geen begrippen gevonden die overeenkomen met je zoekopdracht.
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ---------------------------------------------------------
+    // 1. DATASET VAN GROOTHEDEN EN EENHEDEN
+    // ---------------------------------------------------------
+    const QUANTITIES = [
+      // BASIS (ONDERBOUW)
+      {
+        id: 'lengte',
+        name: 'Lengte',
+        symbol: 'l',
+        unit: 'meter',
+        unitSymbol: 'm',
+        level: 'basis',
+        example: 'A = l · b  (bijv. 2,5 m)',
+        trapNote: 'Lengte heeft grootheidssymbool l (cursief) en eenheid meter (m). Voor afgelegde afstand gebruik je symbool s!'
+      },
+      {
+        id: 'afstand',
+        name: 'Afstand',
+        symbol: 's',
+        unit: 'meter',
+        unitSymbol: 'm',
+        level: 'basis',
+        example: 's = v · t  (bijv. 100 m)',
+        trapNote: 'Klassieke valkuil: het cursieve symbool s staat voor de grootheid afstand (in meter), terwijl de rechte letter s het symbool is voor de eenheid seconde!'
+      },
+      {
+        id: 'tijd',
+        name: 'Tijd',
+        symbol: 't',
+        unit: 'seconde',
+        unitSymbol: 's',
+        level: 'basis',
+        example: 't = s / v  (bijv. 60 s)',
+        trapNote: 'Kleine letter t is tijd (in s); hoofdletter T is temperatuur (in K) of trillingstijd! Verwar eenheid s (seconde) niet met grootheid s (afstand).'
+      },
+      {
+        id: 'massa',
+        name: 'Massa',
+        symbol: 'm',
+        unit: 'kilogram',
+        unitSymbol: 'kg',
+        level: 'basis',
+        example: 'm = ρ · V  (bijv. 75 kg)',
+        trapNote: 'Verwar grootheid m (massa) niet met eenheid m (meter).'
+      },
+      {
+        id: 'snelheid',
+        name: 'Snelheid',
+        symbol: 'v',
+        unit: 'meter per seconde',
+        unitSymbol: 'm/s',
+        level: 'basis',
+        example: 'v = s / t  (1 m/s = 3,6 km/h)',
+        trapNote: 'Kleine letter v is snelheid; hoofdletter V is volume (grootheid) of volt (eenheid).'
+      },
+      {
+        id: 'kracht',
+        name: 'Kracht',
+        symbol: 'F',
+        unit: 'newton',
+        unitSymbol: 'N',
+        level: 'basis',
+        example: 'Fz = m · g  (bijv. 500 N)',
+        trapNote: 'Vernoemd naar Isaac Newton: eenheid newton met kleine letter, symbool N met hoofdletter.'
+      },
+      {
+        id: 'spanning',
+        name: 'Spanning',
+        symbol: 'U',
+        unit: 'volt',
+        unitSymbol: 'V',
+        level: 'basis',
+        example: 'U = I · R  (stopcontact: 230 V)',
+        trapNote: 'Veelgemaakte fout: spanning heeft symbool U (van het Duitse Unterschied), en de eenheid volt heeft symbool V!'
+      },
+      {
+        id: 'stroomsterkte',
+        name: 'Stroomsterkte',
+        symbol: 'I',
+        unit: 'ampère',
+        unitSymbol: 'A',
+        level: 'basis',
+        example: 'I = U / R  (bijv. 0,5 A)',
+        trapNote: 'Stroomsterkte heeft symbool I (Intensiteit), eenheid ampère (A).'
+      },
+      {
+        id: 'vermogen',
+        name: 'Vermogen',
+        symbol: 'P',
+        unit: 'watt',
+        unitSymbol: 'W',
+        level: 'basis',
+        example: 'P = U · I  (waterkoker: 2000 W)',
+        trapNote: 'Hoofdletter P (Power) voor vermogen, met eenheid watt (W). Kleine p is druk!'
+      },
+      {
+        id: 'energie',
+        name: 'Energie',
+        symbol: 'E',
+        unit: 'joule',
+        unitSymbol: 'J',
+        level: 'basis',
+        example: 'E = P · t  (1 kWh = 3,6 MJ)',
+        trapNote: 'De standaard SI-eenheid voor energie is joule (J).'
+      },
+      {
+        id: 'temperatuur',
+        name: 'Temperatuur',
+        symbol: 'T',
+        unit: 'kelvin / graden Celsius',
+        unitSymbol: 'K / °C',
+        level: 'basis',
+        example: 'T(K) = T(°C) + 273',
+        trapNote: 'De officiële SI-eenheid is kelvin (K, zonder gradenteken!). In het dagelijks leven gebruiken we °C.'
+      },
+      {
+        id: 'oppervlakte',
+        name: 'Oppervlakte',
+        symbol: 'A',
+        unit: 'vierkante meter',
+        unitSymbol: 'm²',
+        level: 'basis',
+        example: 'A = l · b  (bijv. 25 m²)',
+        trapNote: 'Oppervlakte (Area) heeft grootheidssymbool A; verwar dit niet met eenheid A (ampère).'
+      },
+      {
+        id: 'volume',
+        name: 'Volume',
+        symbol: 'V',
+        unit: 'kubieke meter',
+        unitSymbol: 'm³',
+        level: 'basis',
+        example: 'V = l · b · h  (1 L = 1 dm³)',
+        trapNote: 'Volume heeft grootheidssymbool V; verwar dit niet met eenheid V (volt).'
+      },
+      {
+        id: 'dichtheid',
+        name: 'Dichtheid',
+        symbol: 'ρ',
+        unit: 'kilogram per kubieke meter',
+        unitSymbol: 'kg/m³',
+        level: 'basis',
+        example: 'ρ = m / V  (water: 1000 kg/m³)',
+        trapNote: 'Het symbool ρ is de Griekse letter rho (geen kleine p!).'
+      },
+
+      // GEVORDERD (BOVENBOUW)
+      {
+        id: 'weerstand',
+        name: 'Elektrische weerstand',
+        symbol: 'R',
+        unit: 'ohm',
+        unitSymbol: 'Ω',
+        level: 'gevorderd',
+        example: 'R = U / I  (bijv. 470 Ω)',
+        trapNote: 'Het eenheidssymbool Ω is de Griekse hoofdletter Omega.'
+      },
+      {
+        id: 'lading',
+        name: 'Elektrische lading',
+        symbol: 'Q',
+        unit: 'coulomb',
+        unitSymbol: 'C',
+        level: 'gevorderd',
+        example: 'Q = I · t  (1 C = 1 A·s)',
+        trapNote: 'Lading heeft symbool Q en eenheid coulomb (C). Verwar eenheid C niet met grootheid C (capaciteit)!'
+      },
+      {
+        id: 'frequentie',
+        name: 'Frequentie',
+        symbol: 'f',
+        unit: 'hertz',
+        unitSymbol: 'Hz',
+        level: 'gevorderd',
+        example: 'f = 1 / T  (lichtnet: 50 Hz)',
+        trapNote: 'Frequentie is het aantal trillingen per seconde (1 Hz = 1 s⁻¹).'
+      },
+      {
+        id: 'druk',
+        name: 'Druk',
+        symbol: 'p',
+        unit: 'pascal',
+        unitSymbol: 'Pa',
+        level: 'gevorderd',
+        example: 'p = F / A  (1 Pa = 1 N/m²)',
+        trapNote: 'Druk heeft een kleine p (pressure) en eenheid pascal (Pa). Hoofdletter P is vermogen!'
+      },
+      {
+        id: 'arbeid',
+        name: 'Arbeid',
+        symbol: 'W',
+        unit: 'joule',
+        unitSymbol: 'J',
+        level: 'gevorderd',
+        example: 'W = F · s  (bijv. 120 J)',
+        trapNote: 'Arbeid (Work) heeft symbool W en eenheid joule (J). Verwar grootheid W niet met eenheid W (watt)!'
+      },
+      {
+        id: 'versnelling',
+        name: 'Versnelling',
+        symbol: 'a',
+        unit: 'meter per seconde kwadraat',
+        unitSymbol: 'm/s²',
+        level: 'gevorderd',
+        example: 'a = Δv / Δt  (valversnelling g = 9,81 m/s²)',
+        trapNote: 'Versnelling (acceleration) heeft kleine letter a. Hoofdletter A is oppervlakte.'
+      },
+      {
+        id: 'capaciteit',
+        name: 'Elektrische capaciteit',
+        symbol: 'C',
+        unit: 'farad',
+        unitSymbol: 'F',
+        level: 'gevorderd',
+        example: 'C = Q / U  (bijv. 100 μF)',
+        trapNote: 'Capaciteit heeft symbool C en eenheid farad (F). Verwar eenheid F niet met grootheid F (kracht)!'
+      },
+      {
+        id: 'magnetische-fluxdichtheid',
+        name: 'Magnetische fluxdichtheid',
+        symbol: 'B',
+        unit: 'tesla',
+        unitSymbol: 'T',
+        level: 'gevorderd',
+        example: 'FL = B · I · l  (MRI: 1,5 T)',
+        trapNote: 'Magnetische veldsterkte / fluxdichtheid B wordt gemeten in tesla (T).'
+      }
+    ];
+
+    const DERIVE_PUZZLES = [
+      {
+        level: 'basis',
+        formulaHtml: '<span class="sym-grootheid">v</span> = <span class="sym-grootheid">s</span> / <span class="sym-grootheid">t</span>',
+        givens: 'afstand <span class="sym-grootheid">s</span> in meter (m) • tijd <span class="sym-grootheid">t</span> in seconde (s)',
+        prompt: 'Welke eenheid volgt hieruit voor snelheid (<span class="sym-grootheid">v</span>)?',
+        correct: 'm/s',
+        options: ['m/s', 'm·s', 's/m', 'm/s²'],
+        explanation: 'Je deelt afstand (in m) door tijd (in s). Dat geeft meter gedeeld door seconde, oftewel m/s.'
+      },
+      {
+        level: 'basis',
+        formulaHtml: '<span class="sym-grootheid">ρ</span> = <span class="sym-grootheid">m</span> / <span class="sym-grootheid">V</span>',
+        givens: 'massa <span class="sym-grootheid">m</span> in kilogram (kg) • volume <span class="sym-grootheid">V</span> in kubieke meter (m³)',
+        prompt: 'Welke samengestelde eenheid hoort bij dichtheid (<span class="sym-grootheid">ρ</span>)?',
+        correct: 'kg/m³',
+        options: ['kg/m³', 'kg·m³', 'm³/kg', 'g/cm²'],
+        explanation: 'Massa (kg) gedeeld door volume (m³) levert direct de eenheid kg/m³ op.'
+      },
+      {
+        level: 'basis',
+        formulaHtml: '<span class="sym-grootheid">P</span> = <span class="sym-grootheid">U</span> · <span class="sym-grootheid">I</span>',
+        givens: 'spanning <span class="sym-grootheid">U</span> in volt (V) • stroomsterkte <span class="sym-grootheid">I</span> in ampère (A)',
+        prompt: 'Welke combinatie is gelijk aan 1 watt (W)?',
+        correct: '1 V·A',
+        options: ['1 V·A', '1 V/A', '1 A/V', '1 U·I'],
+        explanation: 'Omdat P = U · I vermenigvuldig je volt (V) met ampère (A). 1 watt (W) is dus gelijk aan 1 V·A!'
+      },
+      {
+        level: 'basis',
+        formulaHtml: '<span class="sym-grootheid">E</span> = <span class="sym-grootheid">P</span> · <span class="sym-grootheid">t</span>',
+        givens: 'vermogen <span class="sym-grootheid">P</span> in watt (W) • tijd <span class="sym-grootheid">t</span> in seconde (s)',
+        prompt: 'Welke samengestelde eenheid is gelijk aan 1 joule (J)?',
+        correct: '1 W·s',
+        options: ['1 W·s', '1 W/s', '1 s/W', '1 J/s'],
+        explanation: 'Energie is vermogen keer tijd: watt × seconde = W·s. Eén wattseconde (1 W·s) is precies 1 joule (J)!'
+      },
+      {
+        level: 'basis',
+        formulaHtml: '<span class="sym-grootheid">A</span> = <span class="sym-grootheid">l</span> · <span class="sym-grootheid">b</span>',
+        givens: 'lengte <span class="sym-grootheid">l</span> in meter (m) • breedte <span class="sym-grootheid">b</span> in meter (m)',
+        prompt: 'Welke eenheid krijg je als je meter met meter vermenigvuldigt?',
+        correct: 'm²',
+        options: ['m²', '2m', 'm³', 'm/m'],
+        explanation: 'Meter keer meter (m · m) schrijf je als vierkante meter: m².'
+      },
+      {
+        level: 'gevorderd',
+        formulaHtml: '<span class="sym-grootheid">F</span> = <span class="sym-grootheid">m</span> · <span class="sym-grootheid">a</span>',
+        givens: 'massa <span class="sym-grootheid">m</span> in kg • versnelling <span class="sym-grootheid">a</span> in m/s²',
+        prompt: 'Hoe schrijf je 1 newton (N) uit in SI-grondeenheden?',
+        correct: 'kg·m/s²',
+        options: ['kg·m/s²', 'kg·m/s', 'kg/(m·s²)', 'kg·s²/m'],
+        explanation: 'Vermenigvuldig kg met m/s²: je krijgt kg·m/s². Dat is precies de definitie van 1 newton (N).'
+      },
+      {
+        level: 'gevorderd',
+        formulaHtml: '<span class="sym-grootheid">p</span> = <span class="sym-grootheid">F</span> / <span class="sym-grootheid">A</span>',
+        givens: 'kracht <span class="sym-grootheid">F</span> in newton (N) • oppervlakte <span class="sym-grootheid">A</span> in m²',
+        prompt: 'Welke samengestelde eenheid is gelijk aan 1 pascal (Pa)?',
+        correct: 'N/m²',
+        options: ['N/m²', 'N·m²', 'N/m', 'm²/N'],
+        explanation: 'Druk is kracht gedeeld door oppervlakte: newton per vierkante meter (N/m²).'
+      },
+      {
+        level: 'gevorderd',
+        formulaHtml: '<span class="sym-grootheid">W</span> = <span class="sym-grootheid">F</span> · <span class="sym-grootheid">s</span>',
+        givens: 'kracht <span class="sym-grootheid">F</span> in newton (N) • afstand <span class="sym-grootheid">s</span> in meter (m)',
+        prompt: 'Welke combinatie is gelijk aan 1 joule (J) aan arbeid?',
+        correct: 'N·m',
+        options: ['N·m', 'N/m', 'N/s', 'W·m'],
+        explanation: 'Arbeid is kracht keer verplaatsing: newton keer meter (N·m). 1 N·m = 1 joule (J).'
+      },
+      {
+        level: 'gevorderd',
+        formulaHtml: '<span class="sym-grootheid">R</span> = <span class="sym-grootheid">U</span> / <span class="sym-grootheid">I</span>',
+        givens: 'spanning <span class="sym-grootheid">U</span> in volt (V) • stroomsterkte <span class="sym-grootheid">I</span> in ampère (A)',
+        prompt: 'Welke verhouding is gelijk aan 1 ohm (Ω)?',
+        correct: 'V/A',
+        options: ['V/A', 'V·A', 'A/V', 'C/V'],
+        explanation: 'Weerstand is spanning gedeeld door stroomsterkte: volt per ampère (V/A = Ω).'
+      },
+      {
+        level: 'gevorderd',
+        formulaHtml: '<span class="sym-grootheid">Q</span> = <span class="sym-grootheid">I</span> · <span class="sym-grootheid">t</span>',
+        givens: 'stroomsterkte <span class="sym-grootheid">I</span> in ampère (A) • tijd <span class="sym-grootheid">t</span> in seconde (s)',
+        prompt: 'Welke eenheid is gelijk aan 1 coulomb (C)?',
+        correct: 'A·s',
+        options: ['A·s', 'A/s', 'V·s', 'C/s'],
+        explanation: 'Lading is stroomsterkte keer tijd: 1 coulomb (C) is gelijk aan 1 ampèreseconde (A·s).'
+      }
+    ];
+
+    // ---------------------------------------------------------
+    // 2. GLOBALE STATUS & GELUIDSEFFECTEN
+    // ---------------------------------------------------------
+    let currentLevel = 'basis';
+    let currentTab = 'quiz';
+    let soundEnabled = true;
+
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = AudioContextClass ? new AudioContextClass() : null;
+
+    function playTone(type) {
+      if (!soundEnabled || !audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(185, now + 0.1);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        } else if (type === 'win') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-sound').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function getPoolForLevel() {
+      if (currentLevel === 'basis') {
+        return QUANTITIES.filter(q => q.level === 'basis');
+      }
+      return QUANTITIES;
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    // ---------------------------------------------------------
+    // 3. NAVIGATIE & NIVEAU WISSELEN
+    // ---------------------------------------------------------
+    function setLevel(level) {
+      currentLevel = level;
+      document.getElementById('btn-level-basis').classList.toggle('active', level === 'basis');
+      document.getElementById('btn-level-gevorderd').classList.toggle('active', level === 'gevorderd');
+
+      startQuizRound(false);
+      initMatchGame();
+      initDeriveSection();
+      renderCheatsheet();
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabs = ['quiz', 'match', 'derive', 'cheatsheet'];
+      tabs.forEach(t => {
+        document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
+        document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+      });
+
+      if (tab !== 'match') {
+        stopMatchTimer();
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 4. MODUS 1: MEERKEUZE QUIZ
+    // ---------------------------------------------------------
+    let quizState = {
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      answered: false,
+      mistakes: [],
+      focusOnlyMode: false
+    };
+
+    const TRAP_QUESTIONS = [
+      {
+        level: 'basis',
+        quantityId: 'afstand',
+        typeLabel: '⚠️ Pas op voor de instinker!',
+        questionHtml: 'In formules zie je de cursieve letter <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.4rem;">s</span> en achter een getal zie je de rechte letter <span class="sym-eenheid" style="color: #0d9488; font-size: 1.35rem;">s</span>. Wat betekenen ze?',
+        correct: 'Cursieve s is afstand (grootheid); rechte s is seconde (eenheid)',
+        options: [
+          'Cursieve s is afstand (grootheid); rechte s is seconde (eenheid)',
+          'Cursieve s is seconde (grootheid); rechte s is snelheid (eenheid)',
+          'Beide betekenen precies hetzelfde: seconde',
+          'Cursieve s is snelheid; rechte s is afstand'
+        ],
+        explanation: 'Het cursieve symbool <span class="sym-grootheid">s</span> (van het Latijnse <em>spatium</em>) is de grootheid <strong>afstand</strong> (in meter). De rechte letter <span class="sym-eenheid">s</span> is de eenheid <strong>seconde</strong> (van tijd <span class="sym-grootheid">t</span>).'
+      },
+      {
+        level: 'basis',
+        quantityId: 'lengte',
+        typeLabel: '⚠️ Lengte vs. Afstand',
+        questionHtml: 'Zowel <strong>lengte</strong> als <strong>afstand</strong> hebben de eenheid meter (<span class="sym-eenheid">m</span>). Welke grootheidssymbolen horen bij deze twee grootheden?',
+        correct: 'Lengte heeft symbool l en afstand heeft symbool s',
+        options: [
+          'Lengte heeft symbool l en afstand heeft symbool s',
+          'Lengte heeft symbool m en afstand heeft symbool a',
+          'Lengte heeft symbool s en afstand heeft symbool l',
+          'Beide hebben altijd het symbool m'
+        ],
+        explanation: 'Lengte heeft het cursieve symbool <span class="sym-grootheid">l</span> (bijv. in <span class="sym-grootheid">A</span> = <span class="sym-grootheid">l</span> · <span class="sym-grootheid">b</span>) en afgelegde afstand heeft het cursieve symbool <span class="sym-grootheid">s</span> (bijv. in <span class="sym-grootheid">s</span> = <span class="sym-grootheid">v</span> · <span class="sym-grootheid">t</span>).'
+      },
+      {
+        level: 'basis',
+        quantityId: 'massa',
+        typeLabel: '⚠️ Pas op voor de instinker!',
+        questionHtml: 'In een formule staat de letter <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.4rem;">m</span> (cursief) en achter een getal staat <span class="sym-eenheid" style="color: #0d9488; font-size: 1.35rem;">m</span> (rechtop). Wat is het verschil?',
+        correct: 'Cursieve m is massa (grootheid); rechte m is meter (eenheid)',
+        options: [
+          'Cursieve m is massa (grootheid); rechte m is meter (eenheid)',
+          'Cursieve m is meter (grootheid); rechte m is massa (eenheid)',
+          'Beide betekenen precies hetzelfde: meter',
+          'Cursieve m is minuut; rechte m is massa'
+        ],
+        explanation: 'Grootheden schrijf je altijd cursief (<span class="sym-grootheid">m</span> = massa) en eenheden schrijf je altijd rechtop (<span class="sym-eenheid">m</span> = meter).'
+      },
+      {
+        level: 'basis',
+        quantityId: 'spanning',
+        typeLabel: '⚠️ Pas op voor de instinker!',
+        questionHtml: 'Veel leerlingen halen de letter <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.4rem;">U</span> en de letter <span class="sym-eenheid" style="color: #0d9488; font-size: 1.35rem;">V</span> door elkaar. Wat is juist?',
+        correct: 'U is het symbool voor spanning; V is het symbool voor volt',
+        options: [
+          'U is het symbool voor spanning; V is het symbool voor volt',
+          'V is het symbool voor spanning; U is het symbool voor volt',
+          'U is de eenheid van spanning; V is de grootheid',
+          'U staat voor stroomsterkte en V voor vermogen'
+        ],
+        explanation: 'Spanning is de grootheid met symbool <span class="sym-grootheid">U</span>. De bijbehorende eenheid is volt met symbool <span class="sym-eenheid">V</span>.'
+      },
+      {
+        level: 'basis',
+        quantityId: 'volume',
+        typeLabel: '⚠️ Pas op voor de instinker!',
+        questionHtml: 'De hoofdletter <strong style="color: var(--tile-color); font-size: 1.35rem;">V</strong> komt twee keer voor in de natuurkunde. Welke twee betekenissen heeft V?',
+        correct: 'Grootheid Volume (V) en eenheid volt (V)',
+        options: [
+          'Grootheid Volume (V) en eenheid volt (V)',
+          'Grootheid Snelheid (v) en eenheid vermogen (V)',
+          'Grootheid Vermogen (V) en eenheid volume (V)',
+          'Grootheid Spanning (V) en eenheid snelheid (V)'
+        ],
+        explanation: 'Hoofdletter <span class="sym-grootheid">V</span> (cursief) is de grootheid Volume (in m³), en hoofdletter <span class="sym-eenheid">V</span> (rechtop) is de eenheid volt (van spanning <span class="sym-grootheid">U</span>). Kleine <span class="sym-grootheid">v</span> is snelheid!'
+      },
+      {
+        level: 'gevorderd',
+        quantityId: 'druk',
+        typeLabel: '⚠️ Hoofdletter vs. Kleine letter',
+        questionHtml: 'Wat is het verschil tussen de grootheden <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.4rem;">p</span> (kleine letter) en <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.4rem;">P</span> (hoofdletter)?',
+        correct: 'p is druk (in Pa) en P is vermogen (in W)',
+        options: [
+          'p is druk (in Pa) en P is vermogen (in W)',
+          'p is vermogen (in W) en P is druk (in Pa)',
+          'p is dichtheid (in kg/m³) en P is druk (in Pa)',
+          'Er is geen verschil, beide staan voor vermogen'
+        ],
+        explanation: 'Een kleine <span class="sym-grootheid">p</span> staat voor druk (in pascal, Pa). Een hoofdletter <span class="sym-grootheid">P</span> staat voor vermogen (in watt, W). Dichtheid schrijf je met de Griekse letter <span class="sym-grootheid">ρ</span>!'
+      },
+      {
+        level: 'gevorderd',
+        quantityId: 'arbeid',
+        typeLabel: '⚠️ Pas op voor de instinker!',
+        questionHtml: 'In de bovenbouw kom je zowel de grootheid <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.4rem;">W</span> als de eenheid <span class="sym-eenheid" style="color: #0d9488; font-size: 1.35rem;">W</span> tegen. Wat zijn dit?',
+        correct: 'Grootheid arbeid (W, in joule) en eenheid watt (W, van vermogen)',
+        options: [
+          'Grootheid arbeid (W, in joule) en eenheid watt (W, van vermogen)',
+          'Grootheid weerstand (W, in ohm) en eenheid watt (W)',
+          'Grootheid vermogen (W) en eenheid arbeid (W)',
+          'Grootheid warmte (W) en eenheid werk (W)'
+        ],
+        explanation: 'Arbeid (Engels: Work) heeft symbool <span class="sym-grootheid">W</span> en wordt gemeten in joule (J). De eenheid <span class="sym-eenheid">W</span> staat voor watt (de eenheid van vermogen <span class="sym-grootheid">P</span>).'
+      }
+    ];
+
+    function generateQuizQuestion(pool, forceItem = null) {
+      if (!forceItem && Math.random() < 0.22) {
+        const validTraps = TRAP_QUESTIONS.filter(t => currentLevel === 'gevorderd' || t.level === 'basis');
+        const trap = validTraps[Math.floor(Math.random() * validTraps.length)];
+        const itemObj = QUANTITIES.find(q => q.id === trap.quantityId) || pool[0];
+        return {
+          item: itemObj,
+          typeLabel: trap.typeLabel,
+          questionHtml: trap.questionHtml,
+          correct: trap.correct,
+          options: shuffleArray(trap.options),
+          explanation: trap.explanation
+        };
+      }
+
+      const target = forceItem || pool[Math.floor(Math.random() * pool.length)];
+      const qType = Math.floor(Math.random() * 4);
+      const distractors = shuffleArray(pool.filter(q => q.id !== target.id && q.unit !== target.unit)).slice(0, 3);
+
+      if (qType === 0) {
+        return {
+          item: target,
+          typeLabel: 'Grootheid → Eenheid',
+          questionHtml: `Wat is de standaard eenheid van de grootheid <strong>${target.name.toLowerCase()}</strong> (<span class="sym-grootheid">${target.symbol}</span>)?`,
+          correct: `${target.unit} (${target.unitSymbol})`,
+          options: shuffleArray([
+            `${target.unit} (${target.unitSymbol})`,
+            ...distractors.map(d => `${d.unit} (${d.unitSymbol})`)
+          ]),
+          explanation: `Bij de grootheid <strong>${target.name.toLowerCase()}</strong> (symbool <span class="sym-grootheid">${target.symbol}</span>) hoort de eenheid <strong>${target.unit}</strong> (<span class="sym-eenheid">${target.unitSymbol}</span>). ${target.trapNote}`
+        };
+      } else if (qType === 1) {
+        return {
+          item: target,
+          typeLabel: 'Symbool → Grootheid',
+          questionHtml: `Welke grootheid wordt in formules weergegeven met het symbool <span class="sym-grootheid" style="color: var(--tile-color); font-size: 1.45rem;">${target.symbol}</span>?`,
+          correct: target.name,
+          options: shuffleArray([
+            target.name,
+            ...distractors.map(d => d.name)
+          ]),
+          explanation: `Het cursieve symbool <span class="sym-grootheid">${target.symbol}</span> staat voor <strong>${target.name.toLowerCase()}</strong> (eenheid: ${target.unit}, <span class="sym-eenheid">${target.unitSymbol}</span>).`
+        };
+      } else if (qType === 2) {
+        return {
+          item: target,
+          typeLabel: 'Eenheid → Symbool eenheid',
+          questionHtml: `Welk eenheidssymbool hoort bij de eenheid <strong>${target.unit}</strong>?`,
+          correct: target.unitSymbol,
+          options: shuffleArray([
+            target.unitSymbol,
+            ...distractors.map(d => d.unitSymbol)
+          ]),
+          explanation: `De eenheid <strong>${target.unit}</strong> kort je af als <span class="sym-eenheid">${target.unitSymbol}</span> (altijd rechtop geschreven). ${target.trapNote}`
+        };
+      } else {
+        return {
+          item: target,
+          typeLabel: 'Eenheid → Grootheid',
+          questionHtml: `Je leest in een opgave de waarde: <strong>"25 <span class="sym-eenheid" style="color: var(--tile-color);">${target.unitSymbol}</span>"</strong> (${target.unit}). Welke grootheid is hier gemeten?`,
+          correct: `${target.name} (${target.symbol})`,
+          options: shuffleArray([
+            `${target.name} (${target.symbol})`,
+            ...distractors.map(d => `${d.name} (${d.symbol})`)
+          ]),
+          explanation: `De eenheid <strong>${target.unit}</strong> (<span class="sym-eenheid">${target.unitSymbol}</span>) hoort bij de grootheid <strong>${target.name.toLowerCase()}</strong> (<span class="sym-grootheid">${target.symbol}</span>).`
+        };
+      }
+    }
+
+    function startQuizRound(focusOnMistakes = false) {
+      const pool = getPoolForLevel();
+      let focusItems = [];
+
+      if (focusOnMistakes && quizState.mistakes.length > 0) {
+        focusItems = [...quizState.mistakes];
+      }
+
+      quizState = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        streak: 0,
+        bestStreak: 0,
+        answered: false,
+        mistakes: [],
+        focusOnlyMode: focusOnMistakes && focusItems.length > 0
+      };
+
+      for (let i = 0; i < 10; i++) {
+        if (quizState.focusOnlyMode) {
+          const forced = focusItems[i % focusItems.length];
+          quizState.questions.push(generateQuizQuestion(pool, forced));
+        } else {
+          quizState.questions.push(generateQuizQuestion(pool));
+        }
+      }
+
+      document.getElementById('quiz-summary-card').classList.add('hidden');
+      document.getElementById('quiz-active-card').classList.remove('hidden');
+      document.getElementById('quiz-focus-badge').classList.toggle('hidden', !quizState.focusOnlyMode);
+      document.getElementById('quiz-level-tag').textContent = `Niveau: ${currentLevel === 'basis' ? 'Basis (Onderbouw)' : 'Gevorderd (Bovenbouw)'}`;
+
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const q = quizState.questions[quizState.currentIndex];
+      quizState.answered = false;
+
+      document.getElementById('quiz-round-badge').textContent = `Vraag ${quizState.currentIndex + 1} van 10`;
+      document.getElementById('quiz-score').textContent = quizState.score;
+      document.getElementById('quiz-streak').textContent = quizState.streak;
+      document.getElementById('quiz-progress-bar').style.width = `${((quizState.currentIndex + 1) / 10) * 100}%`;
+
+      document.getElementById('quiz-type-label').textContent = q.typeLabel;
+      document.getElementById('quiz-question-text').innerHTML = q.questionHtml;
+
+      document.getElementById('quiz-feedback-box').classList.add('hidden');
+      document.getElementById('btn-quiz-next').classList.add('hidden');
+
+      const grid = document.getElementById('quiz-options-grid');
+      grid.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.onclick = () => handleQuizAnswer(opt, btn);
+        btn.innerHTML = `
+          <span class="opt-letter">${letters[idx]}</span>
+          <span>${opt}</span>
+        `;
+        grid.appendChild(btn);
+      });
+    }
+
+    function handleQuizAnswer(selectedOption, clickedBtn) {
+      if (quizState.answered) return;
+      quizState.answered = true;
+
+      const q = quizState.questions[quizState.currentIndex];
+      const isCorrect = selectedOption === q.correct;
+      const allBtns = document.querySelectorAll('#quiz-options-grid .opt-btn');
+
+      allBtns.forEach(btn => {
+        btn.disabled = true;
+        const btnText = btn.querySelector('span:last-child').textContent;
+        if (btnText === q.correct) {
+          btn.classList.add('opt-correct');
+        } else if (btn === clickedBtn && !isCorrect) {
+          btn.classList.add('opt-wrong', 'animate-shake');
+        } else {
+          btn.classList.add('opt-dimmed');
+        }
+      });
+
+      const fbBox = document.getElementById('quiz-feedback-box');
+      const fbIcon = document.getElementById('quiz-feedback-icon');
+      const fbTitle = document.getElementById('quiz-feedback-title');
+      const fbExp = document.getElementById('quiz-feedback-explanation');
+
+      fbBox.className = 'feedback-box animate-pop';
+
+      if (isCorrect) {
+        playTone('correct');
+        quizState.score++;
+        quizState.streak++;
+        if (quizState.streak > quizState.bestStreak) quizState.bestStreak = quizState.streak;
+
+        fbBox.classList.add('correct');
+        fbIcon.textContent = '✓';
+        fbTitle.textContent = quizState.streak >= 3 ? `Helemaal goed! (${quizState.streak} op een rij! 🔥)` : 'Goed gedaan!';
+      } else {
+        playTone('wrong');
+        quizState.streak = 0;
+        if (!quizState.mistakes.some(m => m.id === q.item.id)) {
+          quizState.mistakes.push(q.item);
+        }
+
+        fbBox.classList.add('wrong');
+        fbIcon.textContent = '✕';
+        fbTitle.textContent = 'Helaas, dat is niet juist';
+      }
+
+      fbExp.innerHTML = q.explanation;
+
+      document.getElementById('quiz-score').textContent = quizState.score;
+      document.getElementById('quiz-streak').textContent = quizState.streak;
+
+      const nextBtn = document.getElementById('btn-quiz-next');
+      nextBtn.querySelector('span').textContent = quizState.currentIndex === 9 ? 'Bekijk eindresultaat' : 'Volgende vraag';
+      nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      if (quizState.currentIndex < 9) {
+        quizState.currentIndex++;
+        renderQuizQuestion();
+      } else {
+        showQuizSummary();
+      }
+    }
+
+    function showQuizSummary() {
+      playTone('win');
+      document.getElementById('quiz-active-card').classList.add('hidden');
+      document.getElementById('quiz-summary-card').classList.remove('hidden');
+
+      const pct = Math.round((quizState.score / 10) * 100);
+      document.getElementById('summary-score').textContent = `${quizState.score}/10`;
+      document.getElementById('summary-percentage').textContent = `${pct}%`;
+      document.getElementById('summary-best-streak').textContent = quizState.bestStreak;
+
+      const trophy = document.getElementById('summary-trophy');
+      const subtitle = document.getElementById('summary-subtitle');
+      if (pct >= 80) {
+        trophy.textContent = '🏆';
+        subtitle.textContent = 'Uitstekend werk! Je beheerst de grootheden en eenheden op dit niveau heel goed.';
+      } else if (pct >= 60) {
+        trophy.textContent = '👍';
+        subtitle.textContent = 'Goed op weg! Bekijk hieronder nog even de begrippen waar je een foutje maakte.';
+      } else {
+        trophy.textContent = '📚';
+        subtitle.textContent = 'Blijf oefenen! Gebruik eventueel het Spiekbriefje om de symbolen en eenheden nog eens door te nemen.';
+      }
+
+      const mistakesContainer = document.getElementById('summary-mistakes-container');
+      const mistakesList = document.getElementById('summary-mistakes-list');
+      const retryBtn = document.getElementById('btn-retry-mistakes');
+
+      if (quizState.mistakes.length === 0) {
+        mistakesContainer.classList.add('hidden');
+        retryBtn.classList.add('hidden');
+      } else {
+        mistakesContainer.classList.remove('hidden');
+        retryBtn.classList.remove('hidden');
+        mistakesList.innerHTML = '';
+
+        quizState.mistakes.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'mistake-item';
+          card.innerHTML = `
+            <div>
+              <div class="mistake-item-title">${item.name} (<span class="sym-grootheid">${item.symbol}</span>)</div>
+              <div class="mistake-item-sub">Eenheid: <strong>${item.unit}</strong> (<span class="sym-eenheid">${item.unitSymbol}</span>)</div>
+            </div>
+            <span class="badge-pill" style="background: #ffffff; color: #b91c1c; border: 1px solid #fecaca;">Oefenen</span>
+          `;
+          mistakesList.appendChild(card);
+        });
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 5. MODUS 2: KOPPELSPEL
+    // ---------------------------------------------------------
+    let matchState = {
+      pairs: [],
+      selectedLeft: null,
+      selectedRight: null,
+      matchedIds: new Set(),
+      attempts: 0,
+      seconds: 0,
+      timerInterval: null
+    };
+
+    function stopMatchTimer() {
+      if (matchState.timerInterval) {
+        clearInterval(matchState.timerInterval);
+        matchState.timerInterval = null;
+      }
+    }
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function initMatchGame() {
+      stopMatchTimer();
+      const pool = getPoolForLevel();
+      const mode = document.getElementById('match-mode-select').value;
+
+      let selectedSix = [];
+      const shuffledPool = shuffleArray(pool);
+      const usedRightLabels = new Set();
+
+      for (const item of shuffledPool) {
+        const rightKey = mode === 'unit-name' ? item.unit : (mode === 'unit-symbol' ? item.unitSymbol : item.symbol);
+        if (!usedRightLabels.has(rightKey)) {
+          usedRightLabels.add(rightKey);
+          selectedSix.push(item);
+        }
+        if (selectedSix.length === 6) break;
+      }
+
+      matchState = {
+        pairs: selectedSix,
+        selectedLeft: null,
+        selectedRight: null,
+        matchedIds: new Set(),
+        attempts: 0,
+        seconds: 0,
+        timerInterval: null
+      };
+
+      document.getElementById('match-timer').textContent = '00:00';
+      document.getElementById('match-attempts').textContent = '0';
+      document.getElementById('match-found').textContent = '0 / 6';
+      document.getElementById('match-win-banner').classList.add('hidden');
+
+      const leftCol = document.getElementById('match-col-left');
+      const rightCol = document.getElementById('match-col-right');
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+
+      const leftItems = shuffleArray(selectedSix);
+      const rightItems = shuffleArray(selectedSix);
+
+      leftItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = `match-left-${item.id}`;
+        btn.className = 'match-card';
+        btn.innerHTML = `
+          <span>${item.name}</span>
+          ${mode !== 'quantity-symbol' ? `<span class="sym-chip sym-grootheid">${item.symbol}</span>` : ''}
+        `;
+        btn.onclick = () => selectMatchCard('left', item.id);
+        leftCol.appendChild(btn);
+      });
+
+      rightItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = `match-right-${item.id}`;
+        btn.className = 'match-card right-card';
+
+        if (mode === 'unit-name') {
+          btn.innerHTML = `<span>${item.unit}</span>`;
+        } else if (mode === 'unit-symbol') {
+          btn.innerHTML = `<span class="sym-eenheid" style="font-size: 1.1rem; color: #0f766e;">${item.unitSymbol}</span>`;
+        } else {
+          btn.innerHTML = `<span class="sym-grootheid" style="font-size: 1.25rem; color: var(--tile-color);">${item.symbol}</span>`;
+        }
+
+        btn.onclick = () => selectMatchCard('right', item.id);
+        rightCol.appendChild(btn);
+      });
+
+      matchState.timerInterval = setInterval(() => {
+        if (currentTab === 'match' && matchState.matchedIds.size < 6) {
+          matchState.seconds++;
+          document.getElementById('match-timer').textContent = formatTime(matchState.seconds);
+        }
+      }, 1000);
+    }
+
+    function selectMatchCard(side, id) {
+      if (matchState.matchedIds.has(id)) return;
+
+      if (side === 'left') {
+        if (matchState.selectedLeft) {
+          const prev = document.getElementById(`match-left-${matchState.selectedLeft}`);
+          if (prev) prev.classList.remove('selected-left');
+        }
+        matchState.selectedLeft = id;
+        document.getElementById(`match-left-${id}`).classList.add('selected-left');
+      } else {
+        if (matchState.selectedRight) {
+          const prev = document.getElementById(`match-right-${matchState.selectedRight}`);
+          if (prev) prev.classList.remove('selected-right');
+        }
+        matchState.selectedRight = id;
+        document.getElementById(`match-right-${id}`).classList.add('selected-right');
+      }
+
+      if (matchState.selectedLeft && matchState.selectedRight) {
+        matchState.attempts++;
+        document.getElementById('match-attempts').textContent = matchState.attempts;
+
+        const leftEl = document.getElementById(`match-left-${matchState.selectedLeft}`);
+        const rightEl = document.getElementById(`match-right-${matchState.selectedRight}`);
+
+        if (matchState.selectedLeft === matchState.selectedRight) {
+          playTone('correct');
+          matchState.matchedIds.add(id);
+          document.getElementById('match-found').textContent = `${matchState.matchedIds.size} / 6`;
+
+          [leftEl, rightEl].forEach(el => {
+            el.classList.remove('selected-left', 'selected-right');
+            el.classList.add('matched', 'animate-pop');
+            el.disabled = true;
+          });
+
+          matchState.selectedLeft = null;
+          matchState.selectedRight = null;
+
+          if (matchState.matchedIds.size === 6) {
+            stopMatchTimer();
+            playTone('win');
+            document.getElementById('match-win-stats').textContent = `Je koppelde alle 6 paren in ${matchState.seconds} seconden en ${matchState.attempts} pogingen!`;
+            document.getElementById('match-win-banner').classList.remove('hidden');
+          }
+        } else {
+          playTone('wrong');
+          matchState.selectedLeft = null;
+          matchState.selectedRight = null;
+
+          leftEl.classList.add('wrong-pair', 'animate-shake');
+          rightEl.classList.add('wrong-pair', 'animate-shake');
+
+          setTimeout(() => {
+            leftEl.classList.remove('selected-left', 'wrong-pair', 'animate-shake');
+            rightEl.classList.remove('selected-right', 'wrong-pair', 'animate-shake');
+          }, 550);
+        }
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 6. MODUS 3: EENHEDEN AFLEIDEN
+    // ---------------------------------------------------------
+    let deriveState = {
+      pool: [],
+      currentIndex: 0,
+      score: 0,
+      answered: false
+    };
+
+    function initDeriveSection() {
+      const filtered = currentLevel === 'basis'
+        ? DERIVE_PUZZLES.filter(p => p.level === 'basis')
+        : DERIVE_PUZZLES;
+
+      deriveState = {
+        pool: shuffleArray(filtered),
+        currentIndex: 0,
+        score: 0,
+        answered: false
+      };
+      document.getElementById('derive-score').textContent = '0';
+      renderDerivePuzzle();
+    }
+
+    function renderDerivePuzzle() {
+      const puzzle = deriveState.pool[deriveState.currentIndex % deriveState.pool.length];
+      deriveState.answered = false;
+
+      document.getElementById('derive-formula-display').innerHTML = puzzle.formulaHtml;
+      document.getElementById('derive-givens').innerHTML = puzzle.givens;
+      document.getElementById('derive-question-prompt').innerHTML = puzzle.prompt;
+
+      document.getElementById('derive-feedback-box').classList.add('hidden');
+      document.getElementById('btn-derive-next').classList.add('hidden');
+
+      const grid = document.getElementById('derive-options-grid');
+      grid.innerHTML = '';
+
+      shuffleArray(puzzle.options).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn derive-opt';
+        btn.textContent = opt;
+        btn.onclick = () => handleDeriveAnswer(opt, btn, puzzle);
+        grid.appendChild(btn);
+      });
+    }
+
+    function handleDeriveAnswer(selected, clickedBtn, puzzle) {
+      if (deriveState.answered) return;
+      deriveState.answered = true;
+
+      const isCorrect = selected === puzzle.correct;
+      const allBtns = document.querySelectorAll('#derive-options-grid .opt-btn');
+
+      allBtns.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === puzzle.correct) {
+          btn.classList.add('opt-correct');
+        } else if (btn === clickedBtn && !isCorrect) {
+          btn.classList.add('opt-wrong', 'animate-shake');
+        } else {
+          btn.classList.add('opt-dimmed');
+        }
+      });
+
+      const fbBox = document.getElementById('derive-feedback-box');
+      const fbIcon = document.getElementById('derive-feedback-icon');
+      const fbTitle = document.getElementById('derive-feedback-title');
+      const fbText = document.getElementById('derive-feedback-text');
+
+      fbBox.className = 'feedback-box animate-pop';
+
+      if (isCorrect) {
+        playTone('correct');
+        deriveState.score++;
+        document.getElementById('derive-score').textContent = deriveState.score;
+        fbBox.classList.add('correct');
+        fbIcon.textContent = '✓';
+        fbTitle.textContent = 'Goed afgeleid!';
+      } else {
+        playTone('wrong');
+        fbBox.classList.add('wrong');
+        fbIcon.textContent = '✕';
+        fbTitle.textContent = `Niet helemaal. Het juiste antwoord is ${puzzle.correct}`;
+      }
+
+      fbText.innerHTML = puzzle.explanation;
+      document.getElementById('btn-derive-next').classList.remove('hidden');
+    }
+
+    function nextDerivePuzzle() {
+      deriveState.currentIndex++;
+      renderDerivePuzzle();
+    }
+
+    // ---------------------------------------------------------
+    // 7. MODUS 4: SPIEKBRIEFJE / OVERZICHTSTABEL
+    // ---------------------------------------------------------
+    function renderCheatsheet() {
+      const searchVal = document.getElementById('cheatsheet-search').value.toLowerCase().trim();
+      const levelFilter = document.getElementById('cheatsheet-filter-level').value;
+
+      const filtered = QUANTITIES.filter(item => {
+        const matchesLevel = levelFilter === 'all' || item.level === levelFilter;
+        const matchesSearch = !searchVal ||
+          item.name.toLowerCase().includes(searchVal) ||
+          item.symbol.toLowerCase().includes(searchVal) ||
+          item.unit.toLowerCase().includes(searchVal) ||
+          item.unitSymbol.toLowerCase().includes(searchVal) ||
+          item.example.toLowerCase().includes(searchVal);
+        return matchesLevel && matchesSearch;
+      });
+
+      const tbody = document.getElementById('cheatsheet-tbody');
+      const emptyState = document.getElementById('cheatsheet-empty');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: 700;">${item.name}</td>
+          <td style="text-align: center;"><span class="pill-sym-g sym-grootheid">${item.symbol}</span></td>
+          <td>${item.unit}</td>
+          <td style="text-align: center;"><span class="pill-sym-e sym-eenheid">${item.unitSymbol}</span></td>
+          <td style="font-family: 'Courier New', Courier, monospace; font-size: 0.84rem; color: var(--text-muted);">${item.example}</td>
+          <td style="text-align: right;">
+            <span class="pill-lvl ${item.level}">${item.level === 'basis' ? 'Basis' : 'Gevorderd'}</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------------------------------------------------------
+    // 8. INITIALISATIE
+    // ---------------------------------------------------------
+    window.onload = function () {
+      startQuizRound(false);
+      initMatchGame();
+      initDeriveSection();
+      renderCheatsheet();
+    };
+  </script>
+
+</body>
+</html>
