@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eenheden Omrekenen — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #d97706;
+      --tile-bg: #fef3c7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Centreer de oefenkaart op het scherm */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.4rem;
+    }
+
+    .btn-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background-color: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-reset:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* Categorie-selectie */
+    .category-select-wrap {
+      text-align: left;
+      margin-bottom: 1.15rem;
+    }
+
+    .category-select-wrap label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-main);
+      background-color: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+
+    select:focus {
+      border-color: var(--tile-color);
+    }
+
+    /* Vraagkaart */
+    .question-card {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 1.35rem 1rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+    }
+
+    .question-category {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+      margin-bottom: 0.4rem;
+    }
+
+    .question-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      line-height: 1.2;
+    }
+
+    .question-target {
+      font-size: 1.2rem;
+      font-weight: 600;
+      opacity: 0.95;
+    }
+
+    /* Tip bij eerste foute poging */
+    .tip-box {
+      display: none;
+      gap: 0.75rem;
+      align-items: flex-start;
+      background-color: #fffbeb;
+      border: 1.5px solid #fcd34d;
+      border-left: 4px solid var(--warning);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.15rem;
+      text-align: left;
+    }
+
+    .tip-icon {
+      font-size: 1.25rem;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .tip-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #92400e;
+      margin-bottom: 0.2rem;
+    }
+
+    .tip-text {
+      font-size: 0.88rem;
+      color: #b45309;
+      line-height: 1.45;
+    }
+
+    /* Invoerveld & knoppen */
+    .input-section {
+      text-align: left;
+    }
+
+    .input-section label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      font-size: 1.05rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 0.85rem;
+      transition: border-color 0.15s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--tile-color);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-action:active {
+      transform: scale(0.99);
+    }
+
+    .btn-check {
+      background-color: var(--tile-color);
+    }
+
+    .btn-check:hover:not(:disabled) {
+      background-color: #b45309;
+    }
+
+    .btn-check:disabled {
+      background-color: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    .btn-next {
+      background-color: #2563eb;
+    }
+
+    .btn-next:hover {
+      background-color: #1d4ed8;
+    }
+
+    /* Eindfeedback per vraag */
+    .result-section {
+      display: none;
+    }
+
+    .result-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.85rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .result-banner.correct {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .result-banner.wrong {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    .result-icon {
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    /* Scorebalk onderaan */
+    .score-footer {
+      margin-top: 1.4rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .score-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .score-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--tile-color);
+    }
+
+    .score-pct {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-left: 0.35rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <div class="header-row">
+        <div>
+          <span class="category-tag">Eenheden omrekenen</span>
+          <h1>Eenheden Omrekenen</h1>
+        </div>
+        <button class="btn-reset" onclick="resetOefening()">↻ Reset</button>
+      </div>
+
+      <div class="category-select-wrap">
+        <label for="category-select">Categorie:</label>
+        <select id="category-select" onchange="onCategoryChange()">
+          <option value="all">Alle categorieën</option>
+          <option value="length">Lengte</option>
+          <option value="weight">Massa</option>
+          <option value="volume">Inhoud</option>
+          <option value="time">Tijd</option>
+          <option value="force">Kracht</option>
+          <option value="current">Stroomsterkte</option>
+          <option value="voltage">Spanning</option>
+          <option value="resistance">Weerstand</option>
+          <option value="power">Vermogen</option>
+          <option value="speed">Snelheid</option>
+          <option value="area">Oppervlakte</option>
+          <option value="energy">Energie</option>
+        </select>
+      </div>
+
+      <div class="question-card">
+        <div class="question-category" id="q-category">-</div>
+        <div class="question-value" id="q-value">-</div>
+        <div class="question-target" id="q-target">= ?</div>
+      </div>
+
+      <div class="tip-box" id="tip-box">
+        <span class="tip-icon">💡</span>
+        <div>
+          <div class="tip-title">Niet helemaal — nog één kans!</div>
+          <div class="tip-text" id="tip-text"></div>
+        </div>
+      </div>
+
+      <div class="input-section" id="input-section">
+        <label for="user-answer" id="input-label">Jouw antwoord:</label>
+        <input type="text" id="user-answer" placeholder="Voer je antwoord in..." autocomplete="off">
+        <button class="btn-action btn-check" id="btn-check" onclick="checkAnswer()" disabled>Controleer</button>
+      </div>
+
+      <div class="result-section" id="result-section">
+        <div class="result-banner" id="result-banner">
+          <span class="result-icon" id="result-icon"></span>
+          <span id="result-text"></span>
+        </div>
+        <button class="btn-action btn-next" onclick="generateQuestion()">Volgende vraag →</button>
+      </div>
+
+      <div class="score-footer">
+        <span class="score-label">Score:</span>
+        <div>
+          <span class="score-value" id="score-display">0 / 0</span>
+          <span class="score-pct" id="score-pct"></span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let score = 0;
+    let total = 0;
+    let currentQuestion = null;
+    let feedback = null; // null | 'wrong1' | 'correct' | 'wrong2'
+
+    const conversions = {
+      length: [
+        { from: 'km', to: 'm', factor: 1000, name: 'Lengte', tip: 'Er gaan 1000 meter in één kilometer. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 meter in één kilometer. Deel door 1000.' },
+        { from: 'm', to: 'cm', factor: 100, name: 'Lengte', tip: 'Er gaan 100 centimeter in één meter. Vermenigvuldig met 100.', reverseTip: 'Er gaan 100 centimeter in één meter. Deel door 100.' },
+        { from: 'cm', to: 'mm', factor: 10, name: 'Lengte', tip: 'Er gaan 10 millimeter in één centimeter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 millimeter in één centimeter. Deel door 10.' },
+        { from: 'm', to: 'dm', factor: 10, name: 'Lengte', tip: 'Er gaan 10 decimeter in één meter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 decimeter in één meter. Deel door 10.' },
+        { from: 'dm', to: 'cm', factor: 10, name: 'Lengte', tip: 'Er gaan 10 centimeter in één decimeter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 centimeter in één decimeter. Deel door 10.' }
+      ],
+      weight: [
+        { from: 'kg', to: 'g', factor: 1000, name: 'Massa', tip: 'Er gaan 1000 gram in één kilogram. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 gram in één kilogram. Deel door 1000.' },
+        { from: 'g', to: 'mg', factor: 1000, name: 'Massa', tip: 'Er gaan 1000 milligram in één gram. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milligram in één gram. Deel door 1000.' },
+        { from: 'kg', to: 'hg', factor: 10, name: 'Massa', tip: 'Er gaan 10 hectogram in één kilogram. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 hectogram in één kilogram. Deel door 10.' },
+        { from: 'hg', to: 'dag', factor: 10, name: 'Massa', tip: 'Er gaan 10 decagram in één hectogram. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 decagram in één hectogram. Deel door 10.' },
+        { from: 'dag', to: 'g', factor: 10, name: 'Massa', tip: 'Er gaan 10 gram in één decagram. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 gram in één decagram. Deel door 10.' }
+      ],
+      volume: [
+        { from: 'L', to: 'mL', factor: 1000, name: 'Inhoud', tip: 'Er gaan 1000 milliliter in één liter. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milliliter in één liter. Deel door 1000.' },
+        { from: 'L', to: 'dL', factor: 10, name: 'Inhoud', tip: 'Er gaan 10 deciliter in één liter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 deciliter in één liter. Deel door 10.' },
+        { from: 'dL', to: 'cL', factor: 10, name: 'Inhoud', tip: 'Er gaan 10 centiliter in één deciliter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 centiliter in één deciliter. Deel door 10.' },
+        { from: 'cL', to: 'mL', factor: 10, name: 'Inhoud', tip: 'Er gaan 10 milliliter in één centiliter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 milliliter in één centiliter. Deel door 10.' },
+        { from: 'm³', to: 'dm³', factor: 1000, name: 'Inhoud', tip: 'Er gaan 1000 dm³ in één m³ (10×10×10). Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 dm³ in één m³ (10×10×10). Deel door 1000.' },
+        { from: 'dm³', to: 'cm³', factor: 1000, name: 'Inhoud', tip: 'Er gaan 1000 cm³ in één dm³ (10×10×10). Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 cm³ in één dm³ (10×10×10). Deel door 1000.' },
+        { from: 'L', to: 'dm³', factor: 1, name: 'Inhoud', tip: '1 liter is precies gelijk aan 1 dm³. Het antwoord is hetzelfde getal.', reverseTip: '1 dm³ is precies gelijk aan 1 liter. Het antwoord is hetzelfde getal.' },
+        { from: 'dm³', to: 'L', factor: 1, name: 'Inhoud', tip: '1 dm³ is precies gelijk aan 1 liter. Het antwoord is hetzelfde getal.', reverseTip: '1 liter is precies gelijk aan 1 dm³. Het antwoord is hetzelfde getal.' },
+        { from: 'mL', to: 'cm³', factor: 1, name: 'Inhoud', tip: '1 milliliter is precies gelijk aan 1 cm³. Het antwoord is hetzelfde getal.', reverseTip: '1 cm³ is precies gelijk aan 1 milliliter. Het antwoord is hetzelfde getal.' },
+        { from: 'cm³', to: 'mL', factor: 1, name: 'Inhoud', tip: '1 cm³ is precies gelijk aan 1 milliliter. Het antwoord is hetzelfde getal.', reverseTip: '1 milliliter is precies gelijk aan 1 cm³. Het antwoord is hetzelfde getal.' }
+      ],
+      time: [
+        { from: 'uur', to: 's', factor: 3600, name: 'Tijd', tip: 'Er gaan 60 minuten in een uur, en 60 seconden in een minuut: 60 × 60 = 3600. Vermenigvuldig met 3600.', reverseTip: 'Er gaan 3600 seconden in één uur. Deel dus door 3600.' },
+        { from: 'min', to: 's', factor: 60, name: 'Tijd', tip: 'Er gaan 60 seconden in één minuut. Vermenigvuldig met 60.', reverseTip: 'Er gaan 60 seconden in één minuut. Deel dus door 60.' },
+        { from: 'min', to: 'uur', factor: 1 / 60, name: 'Tijd', tip: 'Er gaan 60 minuten in één uur. Deel dus door 60.', reverseTip: 'Er gaan 60 minuten in één uur. Vermenigvuldig met 60.' }
+      ],
+      force: [
+        { from: 'kN', to: 'N', factor: 1000, name: 'Kracht', tip: 'Er gaan 1000 newton in één kilonewton. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 newton in één kilonewton. Deel door 1000.' },
+        { from: 'N', to: 'mN', factor: 1000, name: 'Kracht', tip: 'Er gaan 1000 millinewton in één newton. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 millinewton in één newton. Deel door 1000.' },
+        { from: 'MN', to: 'kN', factor: 1000, name: 'Kracht', tip: 'Er gaan 1000 kilonewton in één meganewton. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 kilonewton in één meganewton. Deel door 1000.' }
+      ],
+      current: [
+        { from: 'A', to: 'mA', factor: 1000, name: 'Stroomsterkte', tip: 'Er gaan 1000 milliampère in één ampère. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milliampère in één ampère. Deel door 1000.' },
+        { from: 'kA', to: 'A', factor: 1000, name: 'Stroomsterkte', tip: 'Er gaan 1000 ampère in één kiloampère. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 ampère in één kiloampère. Deel door 1000.' }
+      ],
+      voltage: [
+        { from: 'kV', to: 'V', factor: 1000, name: 'Spanning', tip: 'Er gaan 1000 volt in één kilovolt. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 volt in één kilovolt. Deel door 1000.' },
+        { from: 'V', to: 'mV', factor: 1000, name: 'Spanning', tip: 'Er gaan 1000 millivolt in één volt. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 millivolt in één volt. Deel door 1000.' },
+        { from: 'MV', to: 'kV', factor: 1000, name: 'Spanning', tip: 'Er gaan 1000 kilovolt in één megavolt. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 kilovolt in één megavolt. Deel door 1000.' }
+      ],
+      resistance: [
+        { from: 'MΩ', to: 'kΩ', factor: 1000, name: 'Weerstand', tip: 'Er gaan 1000 kilohm in één megaohm. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 kilohm in één megaohm. Deel door 1000.' },
+        { from: 'kΩ', to: 'Ω', factor: 1000, name: 'Weerstand', tip: 'Er gaan 1000 ohm in één kilohm. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 ohm in één kilohm. Deel door 1000.' },
+        { from: 'Ω', to: 'mΩ', factor: 1000, name: 'Weerstand', tip: 'Er gaan 1000 milliohm in één ohm. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milliohm in één ohm. Deel door 1000.' }
+      ],
+      power: [
+        { from: 'MW', to: 'kW', factor: 1000, name: 'Vermogen', tip: 'Er gaan 1000 kilowatt in één megawatt. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 kilowatt in één megawatt. Deel door 1000.' },
+        { from: 'kW', to: 'W', factor: 1000, name: 'Vermogen', tip: 'Er gaan 1000 watt in één kilowatt. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 watt in één kilowatt. Deel door 1000.' },
+        { from: 'W', to: 'mW', factor: 1000, name: 'Vermogen', tip: 'Er gaan 1000 milliwatt in één watt. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milliwatt in één watt. Deel door 1000.' }
+      ],
+      speed: [
+        { from: 'km/h', to: 'm/s', factor: 1 / 3.6, name: 'Snelheid', tip: 'Deel door 3,6 om km/h naar m/s om te rekenen.', reverseTip: 'Vermenigvuldig met 3,6 om m/s naar km/h om te rekenen.' },
+        { from: 'm/s', to: 'km/h', factor: 3.6, name: 'Snelheid', tip: 'Vermenigvuldig met 3,6 om m/s naar km/h om te rekenen.', reverseTip: 'Deel door 3,6 om km/h naar m/s om te rekenen.' },
+        { from: 'm/s', to: 'cm/s', factor: 100, name: 'Snelheid', tip: 'Er gaan 100 centimeter in één meter. Vermenigvuldig met 100.', reverseTip: 'Er gaan 100 centimeter in één meter. Deel door 100.' }
+      ],
+      area: [
+        { from: 'km²', to: 'm²', factor: 1000000, name: 'Oppervlakte', tip: '1 km = 1000 m, dus 1 km² = 1000 × 1000 = 1.000.000 m². Vermenigvuldig met 1.000.000.', reverseTip: '1 km² = 1.000.000 m². Deel door 1.000.000.' },
+        { from: 'm²', to: 'dm²', factor: 100, name: 'Oppervlakte', tip: '1 m = 10 dm, dus 1 m² = 10 × 10 = 100 dm². Vermenigvuldig met 100.', reverseTip: '1 m² = 100 dm². Deel door 100.' },
+        { from: 'dm²', to: 'cm²', factor: 100, name: 'Oppervlakte', tip: '1 dm = 10 cm, dus 1 dm² = 10 × 10 = 100 cm². Vermenigvuldig met 100.', reverseTip: '1 dm² = 100 cm². Deel door 100.' },
+        { from: 'cm²', to: 'mm²', factor: 100, name: 'Oppervlakte', tip: '1 cm = 10 mm, dus 1 cm² = 10 × 10 = 100 mm². Vermenigvuldig met 100.', reverseTip: '1 cm² = 100 mm². Deel door 100.' }
+      ],
+      energy: [
+        { from: 'MJ', to: 'kJ', factor: 1000, name: 'Energie', tip: 'Er gaan 1000 kilojoule in één megajoule. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 kilojoule in één megajoule. Deel door 1000.' },
+        { from: 'kJ', to: 'J', factor: 1000, name: 'Energie', tip: 'Er gaan 1000 joule in één kilojoule. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 joule in één kilojoule. Deel door 1000.' },
+        { from: 'kWh', to: 'J', factor: 3600000, name: 'Energie', tip: '1 kWh = 1000 W × 3600 s = 3.600.000 J. Vermenigvuldig met 3.600.000.', reverseTip: '1 kWh = 3.600.000 J. Deel door 3.600.000.' },
+        { from: 'kWh', to: 'MJ', factor: 3.6, name: 'Energie', tip: '1 kWh = 3,6 MJ. Vermenigvuldig met 3,6.', reverseTip: '1 kWh = 3,6 MJ. Deel door 3,6.' }
+      ]
+    };
+
+    function fmt(n) {
+      if (n === undefined || n === null) return '';
+      const s = parseFloat(n.toPrecision(10)).toString();
+      return s.replace('.', ',');
+    }
+
+    function getAllConversions() {
+      const category = document.getElementById('category-select').value;
+      if (category === 'all') return Object.values(conversions).flat();
+      return conversions[category] || [];
+    }
+
+    function updateScoreDisplay() {
+      document.getElementById('score-display').textContent = `${score} / ${total}`;
+      const pctEl = document.getElementById('score-pct');
+      pctEl.textContent = total > 0 ? `(${Math.round((score / total) * 100)}%)` : '';
+    }
+
+    function generateQuestion() {
+      const available = getAllConversions();
+      const conv = available[Math.floor(Math.random() * available.length)];
+      const reverse = Math.random() > 0.5;
+      const value = reverse
+        ? Math.floor(Math.random() * 500) + 1
+        : parseFloat((Math.random() * 100 + 0.1).toFixed(2));
+
+      currentQuestion = {
+        value,
+        from: reverse ? conv.to : conv.from,
+        to: reverse ? conv.from : conv.to,
+        factor: reverse ? 1 / conv.factor : conv.factor,
+        category: conv.name,
+        tip: reverse ? conv.reverseTip : conv.tip
+      };
+
+      feedback = null;
+
+      document.getElementById('q-category').textContent = currentQuestion.category;
+      document.getElementById('q-value').textContent = `${fmt(currentQuestion.value)} ${currentQuestion.from}`;
+      document.getElementById('q-target').textContent = `= ? ${currentQuestion.to}`;
+
+      document.getElementById('tip-box').style.display = 'none';
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('input-section').style.display = 'block';
+      document.getElementById('input-label').textContent = 'Jouw antwoord:';
+
+      const inputEl = document.getElementById('user-answer');
+      inputEl.value = '';
+      document.getElementById('btn-check').disabled = true;
+      inputEl.focus();
+    }
+
+    function checkAnswer() {
+      const inputEl = document.getElementById('user-answer');
+      const rawVal = inputEl.value.trim();
+      if (!rawVal || !currentQuestion) return;
+
+      const correct = currentQuestion.value * currentQuestion.factor;
+      const entered = parseFloat(rawVal.replace(',', '.'));
+      const isCorrect = !isNaN(entered) && (Math.abs(entered - correct) / (Math.abs(correct) || 1) < 0.001);
+
+      if (isCorrect) {
+        total++;
+        score++;
+        feedback = 'correct';
+        updateScoreDisplay();
+        showResult(true);
+      } else if (feedback === null) {
+        feedback = 'wrong1';
+        document.getElementById('tip-text').textContent = currentQuestion.tip;
+        document.getElementById('tip-box').style.display = 'flex';
+        document.getElementById('input-label').textContent = 'Probeer het nog eens:';
+        inputEl.value = '';
+        document.getElementById('btn-check').disabled = true;
+        inputEl.focus();
+      } else {
+        total++;
+        feedback = 'wrong2';
+        updateScoreDisplay();
+        showResult(false);
+      }
+    }
+
+    function showResult(isCorrect) {
+      document.getElementById('tip-box').style.display = 'none';
+      document.getElementById('input-section').style.display = 'none';
+
+      const banner = document.getElementById('result-banner');
+      const icon = document.getElementById('result-icon');
+      const text = document.getElementById('result-text');
+
+      if (isCorrect) {
+        banner.className = 'result-banner correct';
+        icon.textContent = '✔';
+        text.textContent = 'Goed gedaan! 🎉';
+      } else {
+        const correctAnswer = fmt(currentQuestion.value * currentQuestion.factor);
+        banner.className = 'result-banner wrong';
+        icon.textContent = '✘';
+        text.textContent = `Het juiste antwoord is ${correctAnswer} ${currentQuestion.to}`;
+      }
+
+      document.getElementById('result-section').style.display = 'block';
+    }
+
+    function resetOefening() {
+      score = 0;
+      total = 0;
+      updateScoreDisplay();
+      generateQuestion();
+    }
+
+    function onCategoryChange() {
+      generateQuestion();
+    }
+
+    const answerInput = document.getElementById('user-answer');
+    answerInput.addEventListener('input', function () {
+      document.getElementById('btn-check').disabled = (this.value.trim() === '');
+    });
+
+    document.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        if (feedback === 'correct' || feedback === 'wrong2') {
+          generateQuestion();
+        } else {
+          checkAnswer();
+        }
+      }
+    });
+
+    generateQuestion();
+  </script>
+
+</body>
+</html>
