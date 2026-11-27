@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oscilloscoop Aflezen Trainer — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #0d9488;
+      --tile-bg: #ccfbf1;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Centreer de oefenkaart op het scherm */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem;
+      border-radius: 8px;
+      margin-bottom: 1.15rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    /* Oscilloscoop scherm */
+    .scope-wrapper {
+      background-color: #0f172a;
+      padding: 0.6rem;
+      border-radius: 10px;
+      border: 3px solid #334155;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+      margin-bottom: 0.85rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .scope-wrapper svg {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+      background-color: #111827;
+    }
+
+    .time-div-badge {
+      display: inline-block;
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 1.1rem;
+    }
+
+    .time-div-badge span {
+      color: var(--tile-color);
+    }
+
+    /* Tip-balk */
+    .tip-box {
+      background-color: #f0fdfa;
+      border: 1px solid #99f6e4;
+      border-left: 4px solid var(--tile-color);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.15rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #115e59;
+      line-height: 1.5;
+    }
+
+    .tip-box p + p {
+      margin-top: 0.25rem;
+    }
+
+    /* Invoer & knoppen */
+    .input-section {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .input-section label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      padding: 0.7rem 0.9rem;
+      font-size: 1.05rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--tile-color);
+    }
+
+    input[type="number"].input-correct {
+      border-color: var(--success) !important;
+      background-color: #ecfdf5 !important;
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    input[type="number"].input-wrong {
+      border-color: var(--danger) !important;
+      background-color: #fef2f2 !important;
+      color: #991b1b;
+      font-weight: 700;
+    }
+
+    .unit-label {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .feedback {
+      display: none;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      text-align: left;
+      font-size: 0.94rem;
+      font-weight: 600;
+      line-height: 1.45;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .feedback.correct {
+      display: flex;
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .feedback.wrong {
+      display: flex;
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.78rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-action:active {
+      transform: scale(0.99);
+    }
+
+    .btn-check {
+      background-color: var(--tile-color);
+    }
+
+    .btn-check:hover:not(:disabled) {
+      background-color: #0f766e;
+    }
+
+    .btn-check:disabled {
+      background-color: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    .btn-next {
+      display: none;
+      background-color: var(--success);
+    }
+
+    .btn-next:hover {
+      background-color: #059669;
+    }
+
+    /* Stappenplan uitleg onderaan */
+    .explanation-box {
+      margin-top: 1.25rem;
+      padding: 0.95rem 1rem;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .explanation-box strong {
+      color: var(--text-main);
+    }
+
+    .explanation-box ol {
+      margin-left: 1.25rem;
+      margin-top: 0.35rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <span class="category-tag">Interactieve applicaties</span>
+      <h1>Oscilloscoop Aflezen Trainer</h1>
+
+      <div class="score-board">
+        <span>Goed: <span id="score-correct" style="color: var(--success)">0</span></span>
+        <span>Totaal: <span id="score-total">0</span></span>
+      </div>
+
+      <div class="scope-wrapper">
+        <svg id="scope-svg" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <div class="time-div-badge">
+        Tijd/div: <span id="time-div-label">1 ms/div</span>
+      </div>
+
+      <div class="tip-box">
+        <p><strong>Tip:</strong> Tel hoeveel divisies (hokjes) één volledige trilling (periode) beslaat.</p>
+        <p>Bereken de trillingstijd <em>T</em> in seconden en gebruik <strong>f = 1 / T</strong> om de frequentie te vinden.</p>
+      </div>
+
+      <div class="input-section">
+        <label for="user-answer">Wat is de frequentie? (in Hz)</label>
+        <div class="input-row">
+          <input type="number" id="user-answer" step="any" placeholder="Voer frequentie in..." autocomplete="off">
+          <span class="unit-label">Hz</span>
+        </div>
+      </div>
+
+      <div class="feedback" id="feedback">
+        <span id="feedback-icon"></span>
+        <span id="feedback-text"></span>
+      </div>
+
+      <button class="btn-action btn-check" id="btn-check" onclick="checkAnswer()" disabled>Controleer</button>
+      <button class="btn-action btn-next" id="btn-next" onclick="generateNewWave()">↻ Nieuwe vraag</button>
+
+      <div class="explanation-box">
+        <p><strong>Uitleg:</strong> Het scherm is verdeeld in 10 &times; 6 divisies. De horizontale as toont de tijd.</p>
+        <p style="margin-top: 0.4rem;"><strong>Stappen:</strong></p>
+        <ol>
+          <li>Tel hoeveel divisies één volledige periode beslaat.</li>
+          <li>Vermenigvuldig met <em>tijd/div</em> om de periode <em>T</em> te krijgen (in ms).</li>
+          <li>Bereken <strong>f = 1 / T</strong> (vergeet niet <em>T</em> eerst om te zetten naar seconden!).</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let timeDiv = 1; // ms/div
+    let frequency = 100; // Hz
+    let answered = false;
+    let score = { correct: 0, total: 0 };
+
+    function formatNL(num) {
+      return num.toString().replace('.', ',');
+    }
+
+    function drawOscilloscope() {
+      const svg = document.getElementById('scope-svg');
+      const width = 500;
+      const height = 300;
+      const gridSize = 50; // pixels per divisie
+      const period = 1000 / frequency; // ms
+      const pixelsPerMs = gridSize / timeDiv;
+
+      let svgContent = '';
+
+      // Verticale rasterlijnen
+      for (let x = 0; x <= width; x += gridSize) {
+        svgContent += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="#64748b" stroke-width="1.2" />`;
+      }
+
+      // Horizontale rasterlijnen
+      for (let y = 0; y <= height; y += gridSize) {
+        svgContent += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="#64748b" stroke-width="1.2" />`;
+      }
+
+      // Middellijn (tijdas) dikker
+      svgContent += `<line x1="0" y1="${height / 2}" x2="${width}" y2="${height / 2}" stroke="#94a3b8" stroke-width="2.2" />`;
+
+      // Sinusgolf tekenen
+      const points = [];
+      for (let x = 0; x <= width; x += 2) {
+        const time = x / pixelsPerMs; // tijd in ms
+        const y = height / 2 - Math.sin((2 * Math.PI * time) / period) * (height * 0.35);
+        points.push(`${x},${y.toFixed(2)}`);
+      }
+
+      svgContent += `<polyline points="${points.join(' ')}" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linejoin="round" />`;
+
+      svg.innerHTML = svgContent;
+    }
+
+    function generateNewWave() {
+      const timeScales = [0.5, 1, 2, 5, 10, 20];
+      timeDiv = timeScales[Math.floor(Math.random() * timeScales.length)];
+
+      // 1, 2 of 3 volledige perioden zichtbaar op het scherm (10 divisies breed)
+      const periodsOnScreen = 1 + Math.floor(Math.random() * 3);
+      const totalTime = 10 * timeDiv; // ms
+      const period = totalTime / periodsOnScreen; // ms
+      frequency = Math.round(1000 / period); // Hz
+
+      answered = false;
+
+      document.getElementById('time-div-label').textContent = `${formatNL(timeDiv)} ms/div`;
+      drawOscilloscope();
+
+      const inputEl = document.getElementById('user-answer');
+      inputEl.value = '';
+      inputEl.disabled = false;
+      inputEl.className = '';
+
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.className = 'feedback';
+      feedbackEl.style.display = 'none';
+
+      const btnCheck = document.getElementById('btn-check');
+      btnCheck.style.display = 'block';
+      btnCheck.disabled = true;
+
+      document.getElementById('btn-next').style.display = 'none';
+
+      inputEl.focus();
+    }
+
+    function checkAnswer() {
+      const inputEl = document.getElementById('user-answer');
+      const rawVal = inputEl.value.trim();
+      if (!rawVal || answered) return;
+
+      const answer = parseFloat(rawVal.replace(',', '.'));
+      if (isNaN(answer)) return;
+
+      answered = true;
+      const tolerance = frequency * 0.05; // 5% tolerantie
+      const isCorrect = Math.abs(answer - frequency) <= tolerance;
+
+      const feedbackEl = document.getElementById('feedback');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackText = document.getElementById('feedback-text');
+
+      inputEl.disabled = true;
+      score.total++;
+
+      if (isCorrect) {
+        score.correct++;
+        inputEl.className = 'input-correct';
+        feedbackEl.className = 'feedback correct';
+        feedbackIcon.textContent = '✔';
+        feedbackText.textContent = `Correct! De frequentie is ${frequency} Hz.`;
+      } else {
+        inputEl.className = 'input-wrong';
+        feedbackEl.className = 'feedback wrong';
+        feedbackIcon.textContent = '✘';
+        feedbackText.textContent = `Helaas, de juiste frequentie is ${frequency} Hz. Probeer eerst de periode T te bepalen!`;
+      }
+
+      document.getElementById('score-correct').textContent = score.correct;
+      document.getElementById('score-total').textContent = score.total;
+
+      document.getElementById('btn-check').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'block';
+    }
+
+    const answerInput = document.getElementById('user-answer');
+    answerInput.addEventListener('input', function () {
+      document.getElementById('btn-check').disabled = (this.value.trim() === '');
+    });
+
+    document.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        if (!answered) {
+          checkAnswer();
+        } else {
+          generateNewWave();
+        }
+      }
+    });
+
+    generateNewWave();
+  </script>
+
+</body>
+</html>
