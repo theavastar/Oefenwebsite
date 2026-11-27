@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VectorLab — Hellingmechanica — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #0d9488;
+      --tile-bg: #ccfbf1;
+      --surface: #ffffff;
+      --faint: #f1f5f9;
+      --border: #e2e8f0;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --fz: #2563eb;
+      --fn: #b45309;
+      --fw: #c2410c;
+      --fp: #0d9488;
+      --fres: #7c3aed;
+      --comp: #71717a;
+      --radius: 8px;
+      --mono: 'Courier New', Courier, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--sans);
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Hoofdkader */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .app-card {
+      background: var(--surface);
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 1240px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 680px;
+    }
+
+    .app-header {
+      padding: 0.9rem 1.35rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background-color: #ffffff;
+    }
+
+    .app-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.22rem 0.6rem;
+      border-radius: 5px;
+    }
+
+    .app-header h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      background-color: var(--faint);
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .app-body {
+      display: flex;
+      flex: 1;
+      min-height: 610px;
+    }
+
+    /* Zijbalk met parameters */
+    .sidebar {
+      width: 285px;
+      min-width: 285px;
+      background: #f8fafc;
+      border-right: 1px solid var(--border);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      overflow-y: auto;
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .section-head {
+      background: var(--faint);
+      padding: 0.45rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-body {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .field-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .field-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .field-val {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .push-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .push-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .push-track {
+      position: relative;
+      height: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .push-track input[type="range"] {
+      width: 100%;
+    }
+
+    .push-zero {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 10px;
+      background: #cbd5e1;
+      border-radius: 1px;
+      pointer-events: none;
+    }
+
+    .push-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      background: #e2e8f0;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--text-main);
+      cursor: pointer;
+      border: 2px solid var(--surface);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    input[type="range"]:focus::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px var(--tile-color);
+    }
+
+    #sl-fp::-webkit-slider-thumb {
+      background: var(--fp);
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      padding: 1px 0;
+    }
+
+    .check-row input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkmark {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.35;
+      transition: opacity 0.15s;
+    }
+
+    .checkmark svg {
+      width: 10px;
+      height: 10px;
+      display: none;
+    }
+
+    .check-row input:checked + .checkmark {
+      opacity: 1;
+      border-color: transparent;
+    }
+
+    .check-row input:checked + .checkmark svg {
+      display: block;
+    }
+
+    .swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .swatch.dashed {
+      border-radius: 0;
+      width: 14px;
+      height: 3px;
+    }
+
+    .status-badge {
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .status-badge.moving-down {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .status-badge.moving-up {
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-badge.static {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: 1px solid #cbd5e1;
+    }
+
+    .note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      border-left: 2px solid #cbd5e1;
+      padding-left: 0.55rem;
+    }
+
+    /* Animatieknop */
+    .anim-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--tile-color);
+      transition: all 0.15s;
+      user-select: none;
+      background: var(--tile-color);
+      color: #ffffff;
+    }
+
+    .anim-btn:hover {
+      background: #0f766e;
+    }
+
+    .anim-btn.active {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #ffffff;
+    }
+
+    .anim-btn.active:hover {
+      background: #b91c1c;
+    }
+
+    .anim-info {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Tekenveld (Canvas) */
+    .canvas-wrap {
+      flex: 1;
+      position: relative;
+      background: var(--surface);
+      min-height: 460px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .formulas {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.65rem 0.9rem;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .formulas strong {
+      color: var(--tile-color);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Snelheidsmeter overlay */
+    .speed-overlay {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.65rem 0.9rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 170px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .speed-overlay.visible {
+      display: flex;
+    }
+
+    .speed-title {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .speed-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--fres);
+    }
+
+    .speed-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Resultatenpaneel rechtsonder */
+    .results {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      width: 205px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .results-head {
+      background: var(--faint);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .results-body {
+      padding: 0.65rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .r-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .r-lbl {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .r-val {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .r-div {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.2rem 0;
+    }
+
+    .r-val.hi {
+      color: var(--fres);
+    }
+
+    /* Responsive op kleinere schermen */
+    @media (max-width: 860px) {
+      .app-body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .canvas-wrap {
+        height: 460px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-title-group">
+          <span class="category-tag">Interactieve applicaties</span>
+          <h1>VectorLab — Hellingmechanica</h1>
+        </div>
+        <div class="meta">Puntmassa · g = 9,81 m/s²</div>
+      </div>
+
+      <div class="app-body">
+        <aside class="sidebar">
+          <div class="section">
+            <div class="section-head">Parameters</div>
+            <div class="section-body">
+              <div class="field">
+                <div class="field-top"><span class="field-label">Massa (m)</span><span class="field-val" id="v-m">15,0 kg</span></div>
+                <input type="range" id="sl-m" min="1" max="50" step="1" value="15">
+              </div>
+              <div class="field">
+                <div class="field-top"><span class="field-label">Hellingshoek (α)</span><span class="field-val" id="v-a">30°</span></div>
+                <input type="range" id="sl-a" min="0" max="89" step="1" value="30">
+              </div>
+              <div class="field">
+                <div class="field-top"><span class="field-label">Wrijvingscoëff. (μ)</span><span class="field-val" id="v-u">0,30</span></div>
+                <input type="range" id="sl-u" min="0" max="1" step="0.05" value="0.30">
+              </div>
+              <div class="field">
+                <div class="field-top"><span class="field-label">Vectorschaal</span><span class="field-val" id="v-s">2,4 px/N</span></div>
+                <input type="range" id="sl-s" min="0.5" max="6" step="0.1" value="2.4">
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">Duwkracht (F<sub>p</sub>)</div>
+            <div class="section-body">
+              <div class="push-wrap">
+                <div class="push-top">
+                  <span class="field-label" style="color:var(--fp)">F<sub>p</sub> langs de helling</span>
+                  <span class="field-val" id="v-fp" style="color:var(--fp)">0 N</span>
+                </div>
+                <div class="push-track">
+                  <input type="range" id="sl-fp" min="-300" max="300" step="5" value="0">
+                  <div class="push-zero"></div>
+                </div>
+                <div class="push-labels"><span>◀ omhoog</span><span>0</span><span>omlaag ▶</span></div>
+              </div>
+              <div class="note">Negatief = duwen omhoog langs helling.<br>Positief = duwen omlaag langs helling.</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">Animatie</div>
+            <div class="section-body">
+              <button class="anim-btn" id="anim-btn" onclick="toggleAnim()">
+                <span id="anim-icon">▶</span> Start animatie
+              </button>
+              <div class="note">Verander de hoek tijdens de animatie: het blok versnelt of vertraagt tot een nieuwe constante snelheid.</div>
+              <div class="anim-info" id="anim-info">—</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">Vectoren tonen</div>
+            <div class="section-body">
+              <label class="check-row"><input type="checkbox" id="ck-fz" checked><span class="checkmark" style="background:#2563eb"><svg viewBox="0 0 9 9" fill="none"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="swatch" style="background:var(--fz)"></span>F<sub>z</sub> — Zwaartekracht</label>
+              <label class="check-row"><input type="checkbox" id="ck-fn" checked><span class="checkmark" style="background:#b45309"><svg viewBox="0 0 9 9" fill="none"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="swatch" style="background:var(--fn)"></span>F<sub>n</sub> — Normaalkracht</label>
+              <label class="check-row"><input type="checkbox" id="ck-fw" checked><span class="checkmark" style="background:#c2410c"><svg viewBox="0 0 9 9" fill="none"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="swatch" style="background:var(--fw)"></span>F<sub>w</sub> — Wrijvingskracht</label>
+              <label class="check-row"><input type="checkbox" id="ck-fp" checked><span class="checkmark" style="background:#0d9488"><svg viewBox="0 0 9 9" fill="none"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="swatch" style="background:var(--fp)"></span>F<sub>p</sub> — Duwkracht</label>
+              <label class="check-row"><input type="checkbox" id="ck-fr" checked><span class="checkmark" style="background:#7c3aed"><svg viewBox="0 0 9 9" fill="none"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="swatch" style="background:var(--fres)"></span>F<sub>res</sub> — Resultante</label>
+              <label class="check-row"><input type="checkbox" id="ck-co"><span class="checkmark" style="background:var(--comp)"><svg viewBox="0 0 9 9" fill="none"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="swatch dashed" style="background:var(--comp)"></span>Componenten F<sub>z</sub></label>
+            </div>
+          </div>
+
+          <div class="status-badge static" id="status">In rust (evenwicht)</div>
+          <div class="note">Luchtweerstand verwaarloosd (F<sub>w,l</sub> = 0).</div>
+        </aside>
+
+        <div class="canvas-wrap">
+          <canvas id="cv"></canvas>
+
+          <div class="speed-overlay" id="speed-overlay">
+            <div class="speed-title">Animatie</div>
+            <div class="speed-val" id="spd-val">0,0 m/s</div>
+            <div class="speed-sub" id="spd-phase">In rust</div>
+            <div style="margin-top:4px; height:6px; background:#e2e8f0; border-radius:3px; overflow:hidden;">
+              <div id="spd-bar" style="height:100%; width:0%; background:var(--fres); border-radius:3px; transition:width .1s;"></div>
+            </div>
+            <div class="speed-sub" id="spd-acc">a = 0,00 m/s²</div>
+          </div>
+
+          <div class="formulas">
+            <strong>Formules</strong>
+            F<sub>z</sub> = m · g<br>
+            F<sub>n</sub> = F<sub>z</sub> · cos(α)<br>
+            F<sub>z,||</sub> = F<sub>z</sub> · sin(α)<br>
+            F<sub>w</sub> = μ · F<sub>n</sub> &nbsp;(tegengesteld)<br>
+            F<sub>res</sub> = F<sub>z,||</sub> + F<sub>p</sub> − F<sub>w</sub><br>
+            a = F<sub>res</sub> / m
+          </div>
+
+          <div class="results">
+            <div class="results-head">Resultaten</div>
+            <div class="results-body">
+              <div class="r-row"><span class="r-lbl" style="color:var(--fz)">F<sub>z</sub></span><span class="r-val" id="r-fz" style="color:var(--fz)">—</span></div>
+              <div class="r-row"><span class="r-lbl" style="color:var(--fn)">F<sub>n</sub></span><span class="r-val" id="r-fn" style="color:var(--fn)">—</span></div>
+              <div class="r-row"><span class="r-lbl" style="color:var(--fw)">F<sub>w</sub></span><span class="r-val" id="r-fw" style="color:var(--fw)">—</span></div>
+              <div class="r-row"><span class="r-lbl" style="color:var(--fp)">F<sub>p</sub></span><span class="r-val" id="r-fp" style="color:var(--fp)">—</span></div>
+              <hr class="r-div">
+              <div class="r-row"><span class="r-lbl" style="color:var(--fres)">F<sub>res</sub></span><span class="r-val hi" id="r-fr">—</span></div>
+              <div class="r-row"><span class="r-lbl">a</span><span class="r-val hi" id="r-a">—</span></div>
+              <div class="r-row"><span class="r-lbl">Richting</span><span class="r-val" id="r-dir" style="font-size:0.74rem">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const cv = document.getElementById('cv');
+    const ctx = cv.getContext('2d');
+    const G = 9.81;
+    const colors = { fz: '#2563eb', fn: '#b45309', fw: '#c2410c', fp: '#0d9488', fres: '#7c3aed', comp: '#71717a' };
+
+    let animActive = false;
+    let animRAF = null;
+    let blockPos = 0;
+    let blockVel = 0;
+    let lastTime = null;
+    const PX_PER_M = 80;
+    const MAX_SPEED_DISPLAY = 20;
+
+    function toggleAnim() {
+      animActive = !animActive;
+      const btn = document.getElementById('anim-btn');
+      const icon = document.getElementById('anim-icon');
+      const overlay = document.getElementById('speed-overlay');
+      if (animActive) {
+        btn.classList.add('active');
+        icon.textContent = '■';
+        btn.childNodes[1].textContent = ' Stop animatie';
+        overlay.classList.add('visible');
+        lastTime = null;
+        animLoop();
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '▶';
+        btn.childNodes[1].textContent = ' Start animatie';
+        overlay.classList.remove('visible');
+        if (animRAF) cancelAnimationFrame(animRAF);
+        blockVel = 0;
+        blockPos = 0;
+        update();
+      }
+    }
+
+    function animLoop() {
+      if (!animActive) return;
+      animRAF = requestAnimationFrame(t => {
+        if (!lastTime) lastTime = t;
+        const dt = Math.min((t - lastTime) / 1000, 0.05);
+        lastTime = t;
+        stepPhysics(dt);
+        updateUI();
+        animLoop();
+      });
+    }
+
+    function stepPhysics(dt) {
+      const m    = +document.getElementById('sl-m').value;
+      const aDeg = +document.getElementById('sl-a').value;
+      const mu   = +document.getElementById('sl-u').value;
+      const Fp   = +document.getElementById('sl-fp').value;
+      const aRad = aDeg * Math.PI / 180;
+
+      const Fz     = m * G;
+      const Fn     = Fz * Math.cos(aRad);
+      const Fz_par = Fz * Math.sin(aRad);
+      const Fw_max = mu * Fn;
+      const Fdrive = Fz_par + Fp;
+
+      let Fw_actual, Fres;
+      if (Math.abs(blockVel) > 0.001) {
+        const velSign = blockVel > 0 ? 1 : -1;
+        Fres = Fdrive - velSign * Fw_max;
+        Fw_actual = Fw_max;
+      } else {
+        if (Math.abs(Fdrive) > Fw_max) {
+          const driveSign = Fdrive > 0 ? 1 : -1;
+          Fw_actual = Fw_max * (-driveSign);
+          Fres = Fdrive + Fw_actual;
+        } else {
+          Fres = 0;
+          blockVel = 0;
+        }
+      }
+
+      const a = Fres / m;
+      blockVel += a * dt;
+
+      if (Math.abs(blockVel) > 0.001) {
+        const velSign = blockVel > 0 ? 1 : -1;
+        const FwCheck = Fw_max * (-velSign);
+        const FresCheck = Fdrive + FwCheck;
+        if (FresCheck * blockVel < 0 && Math.abs(FresCheck) < Math.abs(Fw_max) * 0.02) {
+          blockVel = 0;
+        }
+      }
+
+      blockPos -= blockVel * dt * PX_PER_M;
+
+      const sLen = Math.min(cv.width, cv.height) * 0.52;
+      blockPos = Math.max(-sLen * 0.7, Math.min(sLen * 0.7, blockPos));
+
+      const vAbs = Math.abs(blockVel);
+      document.getElementById('spd-val').textContent = vAbs.toFixed(1).replace('.', ',') + ' m/s';
+      document.getElementById('spd-acc').textContent = 'a = ' + a.toFixed(2).replace('.', ',') + ' m/s²';
+      const pct = Math.min(vAbs / MAX_SPEED_DISPLAY * 100, 100);
+      document.getElementById('spd-bar').style.width = pct + '%';
+
+      let phase;
+      if (Math.abs(a) < 0.01 && Math.abs(blockVel) > 0.05) {
+        phase = '⟶ Constante snelheid';
+        document.getElementById('spd-bar').style.background = '#0d9488';
+      } else if (Math.abs(a) > 0.01) {
+        phase = a > 0 ? '▼ Versnelling omlaag' : '▲ Versnelling omhoog';
+        document.getElementById('spd-bar').style.background = '#7c3aed';
+      } else {
+        phase = '■ In rust';
+        document.getElementById('spd-bar').style.background = '#9ca3af';
+      }
+      document.getElementById('spd-phase').textContent = phase;
+      document.getElementById('anim-info').textContent = 'v = ' + vAbs.toFixed(2).replace('.', ',') + ' m/s';
+    }
+
+    function resize() {
+      const wrap = cv.parentElement;
+      cv.width = wrap.clientWidth;
+      cv.height = wrap.clientHeight;
+      if (!animActive) update();
+    }
+
+    function arrow(x, y, dx, dy, color, lbl, thick, dashed) {
+      thick = thick || 2.5;
+      const len = Math.hypot(dx, dy);
+      if (len < 4) return;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = thick;
+      ctx.lineCap = 'round';
+      if (dashed) ctx.setLineDash([6, 5]);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + dx, y + dy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const ang = Math.atan2(dy, dx), hs = 13;
+      ctx.beginPath();
+      ctx.moveTo(x + dx, y + dy);
+      ctx.lineTo(x + dx - hs * Math.cos(ang - Math.PI / 7), y + dy - hs * Math.sin(ang - Math.PI / 7));
+      ctx.lineTo(x + dx - hs * Math.cos(ang + Math.PI / 7), y + dy - hs * Math.sin(ang + Math.PI / 7));
+      ctx.closePath();
+      ctx.fill();
+      if (lbl) {
+        ctx.font = "bold 13px 'Courier New', monospace";
+        ctx.fillText(lbl, x + dx + Math.cos(ang) * 20 - 5, y + dy + Math.sin(ang) * 20 + 5);
+      }
+      ctx.restore();
+    }
+
+    function update() { updateUI(); }
+
+    function updateUI() {
+      const m    = +document.getElementById('sl-m').value;
+      const aDeg = +document.getElementById('sl-a').value;
+      const mu   = +document.getElementById('sl-u').value;
+      const Fp   = +document.getElementById('sl-fp').value;
+
+      document.getElementById('v-m').textContent = m.toFixed(1).replace('.', ',') + ' kg';
+      document.getElementById('v-a').textContent = aDeg + '°';
+      document.getElementById('v-u').textContent = mu.toFixed(2).replace('.', ',');
+      const fpSign = Fp > 0 ? '+' : '';
+      const fpDir  = Fp > 0 ? ' ▼' : Fp < 0 ? ' ▲' : '';
+      document.getElementById('v-fp').textContent = fpSign + Fp + ' N' + fpDir;
+      const scale = +document.getElementById('sl-s').value;
+      document.getElementById('v-s').textContent = scale.toFixed(1).replace('.', ',') + ' px/N';
+
+      const aRad   = aDeg * Math.PI / 180;
+      const Fz     = m * G;
+      const Fn     = Fz * Math.cos(aRad);
+      const Fz_par = Fz * Math.sin(aRad);
+      const Fw_max = mu * Fn;
+      const Fnet   = Fz_par + Fp;
+
+      let Fw_actual, Fres, movingDir;
+      if (animActive) {
+        if (Math.abs(blockVel) > 0.001) {
+          const velSign = blockVel > 0 ? 1 : -1;
+          Fw_actual = Fw_max;
+          Fres = Fnet - velSign * Fw_max;
+          movingDir = blockVel > 0 ? 'down' : 'up';
+        } else if (Math.abs(Fnet) > Fw_max + 0.01) {
+          Fw_actual = Fw_max;
+          Fres = Fnet > 0 ? Fnet - Fw_max : Fnet + Fw_max;
+          movingDir = Fres > 0 ? 'down' : 'up';
+        } else {
+          Fw_actual = Math.abs(Fnet);
+          Fres = 0;
+          movingDir = 'static';
+        }
+      } else {
+        if (Math.abs(Fnet) > Fw_max + 0.01) {
+          Fw_actual = Fw_max;
+          Fres = Fnet > 0 ? Fnet - Fw_max : Fnet + Fw_max;
+          movingDir = Fres > 0 ? 'down' : 'up';
+        } else {
+          Fw_actual = Math.abs(Fnet);
+          Fres = 0;
+          movingDir = 'static';
+        }
+      }
+
+      const a = Fres / m;
+      const st = document.getElementById('status');
+      if (movingDir === 'down') {
+        st.textContent = '▶  Beweegt omlaag langs helling';
+        st.className = 'status-badge moving-down';
+      } else if (movingDir === 'up') {
+        st.textContent = '▶  Beweegt omhoog langs helling';
+        st.className = 'status-badge moving-up';
+      } else {
+        st.textContent = '■  In rust (evenwicht)';
+        st.className = 'status-badge static';
+      }
+
+      const N = v => v.toFixed(1).replace('.', ',') + ' N';
+      document.getElementById('r-fz').textContent = N(Fz);
+      document.getElementById('r-fn').textContent = N(Fn);
+      document.getElementById('r-fw').textContent = N(Fw_actual) + (movingDir !== 'static' ? (Fres > 0 ? ' ↑' : ' ↓') : '');
+      document.getElementById('r-fp').textContent = (Fp >= 0 ? '+' : '') + N(Fp);
+      document.getElementById('r-fr').textContent = (Fres >= 0 ? '+' : '') + N(Math.abs(Fres));
+      document.getElementById('r-a').textContent  = Math.abs(a).toFixed(2).replace('.', ',') + ' m/s²';
+      document.getElementById('r-dir').textContent = movingDir === 'down' ? 'omlaag ↓' : movingDir === 'up' ? 'omhoog ↑' : 'stilstand';
+
+      draw(m, aRad, aDeg, Fz, Fn, Fz_par, Fw_actual, Fp, Fres, movingDir, scale);
+    }
+
+    function draw(m, angle, aDeg, Fz, Fn, Fz_par, Fw_actual, Fp, Fres, movingDir, SCALE) {
+      const W = cv.width, H = cv.height;
+      ctx.clearRect(0, 0, W, H);
+      const cx = W / 2, cy = H / 2 + 20;
+      const sLen = Math.min(W, H) * 0.52;
+
+      // Grid
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0,0,0,0.04)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      ctx.restore();
+
+      // Grondlijn
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      const gY = cy + sLen * Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(cx - sLen * Math.cos(angle), gY);
+      ctx.lineTo(cx + sLen, gY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Helling
+      ctx.save();
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx - sLen * Math.cos(angle), cy + sLen * Math.sin(angle));
+      ctx.lineTo(cx + sLen * Math.cos(angle), cy - sLen * Math.sin(angle));
+      ctx.stroke();
+      ctx.restore();
+
+      // Hoekboog
+      if (aDeg > 2) {
+        const ox = cx - sLen * Math.cos(angle) + 2;
+        const oy = cy + sLen * Math.sin(angle) - 2;
+        ctx.save();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(ox, oy, 32, -angle, 0);
+        ctx.stroke();
+        ctx.font = "11px 'Courier New', monospace";
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('α = ' + aDeg + '°', ox + 36, oy - 8);
+        ctx.restore();
+      }
+
+      // Blok + vectoren
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(-angle);
+
+      const posOffset = animActive ? blockPos : 0;
+
+      if (animActive && Math.abs(blockVel) > 0.05) {
+        ctx.save();
+        const trailLen = Math.min(Math.abs(blockVel) * 20, 80);
+        const trailDir = blockVel > 0 ? 1 : -1;
+        const grad = ctx.createLinearGradient(posOffset + trailDir * trailLen, 0, posOffset, 0);
+        grad.addColorStop(0, 'rgba(124,58,237,0)');
+        grad.addColorStop(1, 'rgba(124,58,237,0.15)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(posOffset + trailDir * trailLen, -50, trailLen, 50);
+        ctx.restore();
+      }
+
+      ctx.translate(posOffset, 0);
+
+      const bS = Math.min(42 + m / 2.5, 88);
+      ctx.shadowColor = 'rgba(0,0,0,0.08)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 3;
+      ctx.fillStyle = '#e2e8f0';
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(-bS / 2, -bS, bS, bS, 5);
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.stroke();
+      ctx.fillStyle = '#1e293b';
+      ctx.font = "bold 12px 'Courier New', monospace";
+      ctx.textAlign = 'center';
+      ctx.fillText(m + ' kg', 0, -bS / 2 + 5);
+
+      if (animActive && Math.abs(blockVel) > 0.05) {
+        const vDir = blockVel > 0 ? -1 : 1;
+        const vLen = Math.min(Math.abs(blockVel) * 8, 80);
+        arrow(0, -bS - 8, vDir * vLen, 0, '#7c3aed', 'v', 2.5);
+      }
+
+      const mpx = 0, mpy = -bS / 2;
+
+      if (document.getElementById('ck-co').checked) {
+        const Fz_lood = Fz * Math.cos(angle);
+        arrow(mpx, mpy, 0, Fz_lood * SCALE, colors.comp, 'Fz,⊥', 1.5, true);
+        arrow(mpx, mpy, -Fz_par * SCALE, 0, colors.comp, 'Fz,||', 1.5, true);
+      }
+      if (document.getElementById('ck-fz').checked) {
+        const dx = -Math.sin(angle) * Fz * SCALE;
+        const dy =  Math.cos(angle) * Fz * SCALE;
+        arrow(mpx, mpy, dx, dy, colors.fz, 'Fz', 3);
+      }
+      if (document.getElementById('ck-fn').checked)
+        arrow(mpx, mpy, 0, -Fn * SCALE, colors.fn, 'Fₙ', 3);
+      if (document.getElementById('ck-fw').checked && Fw_actual > 0.1) {
+        const Fnet = Fz_par + Fp;
+        const fw_dir = animActive ? (blockVel > 0.001 ? 1 : blockVel < -0.001 ? -1 : (Fnet >= 0 ? 1 : -1)) : (Fnet >= 0 ? 1 : -1);
+        arrow(mpx, mpy, fw_dir * Fw_actual * SCALE, 0, colors.fw, 'Fw', 3);
+      }
+      if (document.getElementById('ck-fp').checked && Math.abs(Fp) > 0.1)
+        arrow(mpx, mpy, -Fp * SCALE, 0, colors.fp, 'Fp', 3);
+      if (document.getElementById('ck-fr').checked && Math.abs(Fres) > 0.1)
+        arrow(mpx, mpy, -Fres * SCALE, 0, colors.fres, 'Fres', 4);
+
+      ctx.restore();
+    }
+
+    window.addEventListener('resize', resize);
+    document.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
+      if (!animActive) update();
+    }));
+    new ResizeObserver(resize).observe(cv.parentElement);
+    resize();
+  </script>
+
+</body>
+</html>
