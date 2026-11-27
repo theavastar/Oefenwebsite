@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eenheden omrekenen (Niveau 3) — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #d97706;
+      --tile-bg: #fef3c7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Centreer de oefenkaart op het scherm */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1.75rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 720px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.4rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .controls-top {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.65rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--tile-color);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #b45309;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    /* Opgavenlijst (3 kolommen zoals de Godot GridContainer) */
+    .opgaven-grid {
+      display: none;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .opgave-rij {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1.3fr;
+      align-items: center;
+      gap: 0.75rem;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+    }
+
+    .opgave-tekst {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .opgave-tekst .eenheid-doel {
+      color: var(--tile-color);
+      font-weight: 700;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.45rem 0.65rem;
+      font-size: 0.95rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--tile-color);
+    }
+
+    input[type="text"].input-correct {
+      border-color: var(--success) !important;
+      background-color: #ecfdf5 !important;
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    input[type="text"].input-wrong {
+      border-color: var(--danger) !important;
+      background-color: #fef2f2 !important;
+      color: #991b1b;
+    }
+
+    .feedback-tekst {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .feedback-tekst.correct {
+      color: #065f46;
+    }
+
+    .feedback-tekst.wrong {
+      color: #991b1b;
+    }
+
+    .resultaat-box {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 8px;
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .tip-balk {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .opgave-rij {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <span class="category-tag">Eenheden omrekenen</span>
+      <h1>Eenheden omrekenen — Niveau 3</h1>
+      <p class="subtitle">Tijd (s, ms, μs, ns, d, y), afstand (m, mm, μm, nm), frequentie (Hz, kHz, MHz) en activiteit (Bq, kBq)</p>
+
+      <div class="controls-top">
+        <button class="btn-primary" id="start-knop" onclick="startOefening()">Start nieuwe serie (10 opgaven)</button>
+        <button class="btn-success" id="controleer-knop" onclick="controleerAntwoorden()" style="display: none;">Controleer antwoorden</button>
+      </div>
+
+      <div class="opgaven-grid" id="opgaven-container"></div>
+
+      <div class="resultaat-box" id="resultaat-label"></div>
+      <p class="tip-balk" id="tip-balk">Tip: Je mag zowel een komma als een punt gebruiken (bijv. 0,005 of 5e-3).</p>
+    </div>
+  </main>
+
+  <script>
+    const EENHEDEN = [
+      "s", "ms", "ns", "μs",
+      "d", "y",
+      "m", "mm", "nm", "μm",
+      "Hz", "kHz", "MHz",
+      "Bq", "kBq"
+    ];
+
+    const EENHEID_NAAR_BASIS = {
+      // Tijd - korte tijden (basis: seconden)
+      "s": 1.0, "ms": 0.001, "ns": 1e-9, "μs": 1e-6,
+      // Tijd - lange tijden (basis: dagen)
+      "d": 1.0, "y": 365.25,
+      // Afstand (basis: meters)
+      "m": 1.0, "mm": 0.001, "nm": 1e-9, "μm": 1e-6,
+      // Frequentie (basis: Hz)
+      "Hz": 1.0, "kHz": 1000.0, "MHz": 1_000_000.0,
+      // Activiteit (basis: Bq)
+      "Bq": 1.0, "kBq": 1000.0
+    };
+
+    const EENHEID_SOORT = {
+      "s": "tijd_kort", "ms": "tijd_kort", "ns": "tijd_kort", "μs": "tijd_kort",
+      "d": "tijd_lang", "y": "tijd_lang",
+      "m": "afstand", "mm": "afstand", "nm": "afstand", "μm": "afstand",
+      "Hz": "frequentie", "kHz": "frequentie", "MHz": "frequentie",
+      "Bq": "activiteit", "kBq": "activiteit"
+    };
+
+    const SOORTEN = ["tijd_kort", "tijd_lang", "afstand", "frequentie", "activiteit"];
+
+    let juisteAntwoorden = [];
+
+    function kiesWillekeurig(lijst) {
+      return lijst[Math.floor(Math.random() * lijst.length)];
+    }
+
+    function formatGetalNL(getal) {
+      if (getal === 0) return "0";
+      const abs = Math.abs(getal);
+      // Gebruik wetenschappelijke notatie voor heel kleine of heel grote getallen
+      if (abs < 0.0001 || abs >= 1_000_000_000) {
+        return getal.toExponential(3).replace(/\.?0+e/, "e").replace(".", ",");
+      }
+      // Rond af op maximaal 9 decimalen tegen floating-point ruis (zoals 0.30000000000000004)
+      const afgerond = Number(getal.toPrecision(8));
+      return afgerond.toString().replace(".", ",");
+    }
+
+    function startOefening() {
+      const container = document.getElementById("opgaven-container");
+      const controleerKnop = document.getElementById("controleer-knop");
+      const resultaatLabel = document.getElementById("resultaat-label");
+      const tipBalk = document.getElementById("tip-balk");
+
+      container.innerHTML = "";
+      juisteAntwoorden = [];
+
+      for (let i = 0; i < 10; i++) {
+        genereerEnkeleOpgave(i, container);
+      }
+
+      container.style.display = "flex";
+      controleerKnop.style.display = "inline-block";
+      tipBalk.style.display = "block";
+      resultaatLabel.style.display = "none";
+    }
+
+    function genereerEnkeleOpgave(index, container) {
+      const gekozenSoort = kiesWillekeurig(SOORTEN);
+      const mogelijkeEenheden = EENHEDEN.filter(e => EENHEID_SOORT[e] === gekozenSoort);
+
+      const startEenheid = kiesWillekeurig(mogelijkeEenheden);
+      let eindEenheid = kiesWillekeurig(mogelijkeEenheden);
+      while (eindEenheid === startEenheid) {
+        eindEenheid = kiesWillekeurig(mogelijkeEenheden);
+      }
+
+      let waarde = (gekozenSoort === "tijd_lang")
+        ? (Math.random() * 49.0 + 1.0)
+        : (Math.random() * 999.0 + 1.0);
+
+      waarde = Math.round(waarde * 100) / 100;
+
+      const waardeInBasis = waarde * EENHEID_NAAR_BASIS[startEenheid];
+      const juistAntwoord = waardeInBasis / EENHEID_NAAR_BASIS[eindEenheid];
+      juisteAntwoorden.push(juistAntwoord);
+
+      const rij = document.createElement("div");
+      rij.className = "opgave-rij";
+      rij.innerHTML = `
+        <div class="opgave-tekst">
+          ${index + 1}. &nbsp;${formatGetalNL(waarde)} ${startEenheid} = <span class="eenheid-doel">? ${eindEenheid}</span>
+        </div>
+        <div>
+          <input type="text" id="invoer-${index}" placeholder="Antwoord in ${eindEenheid}" autocomplete="off">
+        </div>
+        <div class="feedback-tekst" id="feedback-${index}"></div>
+      `;
+
+      container.appendChild(rij);
+    }
+
+    function controleerAntwoorden() {
+      let score = 0;
+
+      for (let i = 0; i < juisteAntwoorden.length; i++) {
+        const invulveld = document.getElementById(`invoer-${i}`);
+        const feedbackLabel = document.getElementById(`feedback-${i}`);
+        const rauweTekst = invulveld.value.trim().replace(",", ".");
+        const leerlingGetal = Number(rauweTekst);
+        const juist = juisteAntwoorden[i];
+
+        if (rauweTekst !== "" && !isNaN(leerlingGetal) && isFinite(leerlingGetal)) {
+          // Relatieve tolerantie van 0,5% (handig bij afronding zoals y -> d)
+          const tolerantie = Math.max(Math.abs(juist) * 0.005, 1e-12);
+          if (Math.abs(leerlingGetal - juist) <= tolerantie) {
+            score++;
+            invulveld.className = "input-correct";
+            feedbackLabel.textContent = "✔ Correct!";
+            feedbackLabel.className = "feedback-tekst correct";
+          } else {
+            invulveld.className = "input-wrong";
+            feedbackLabel.textContent = `✘ Fout (${formatGetalNL(juist)})`;
+            feedbackLabel.className = "feedback-tekst wrong";
+          }
+        } else {
+          invulveld.className = "input-wrong";
+          feedbackLabel.textContent = `✘ Ongeldig (${formatGetalNL(juist)})`;
+          feedbackLabel.className = "feedback-tekst wrong";
+        }
+      }
+
+      const resultaatLabel = document.getElementById("resultaat-label");
+      resultaatLabel.textContent = `Je hebt ${score} van de 10 opgaven goed!`;
+      resultaatLabel.style.display = "block";
+    }
+
+    // Enter-toets laat direct controleren
+    document.addEventListener("keypress", function (e) {
+      if (e.key === "Enter" && document.getElementById("controleer-knop").style.display !== "none") {
+        controleerAntwoorden();
+      }
+    });
+  </script>
+
+</body>
+</html>
