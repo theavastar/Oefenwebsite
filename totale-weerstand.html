@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Totale Weerstand Berekenen — NaSk</title>
+  <style>
+    :root {
+      --bg-blue: #1e78b8;
+      --header-blue: #166299;
+      --tile-color: #0d9488;
+      --tile-bg: #ccfbf1;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-blue);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bovenbalk in stijl van de hoofdpagina */
+    .topbar {
+      background-color: var(--header-blue);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .topbar-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Centreer de oefenkaart op het scherm */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border-top: 4px solid var(--tile-color);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      max-width: 660px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tile-color);
+      background-color: var(--tile-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem;
+      border-radius: 8px;
+      margin-bottom: 1.15rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    /* Schakelschema-vak */
+    .circuit-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .circuit-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--tile-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .circuit-svg-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .circuit-svg-wrap svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Formule-tip */
+    .formula-box {
+      background-color: #f0fdfa;
+      border: 1px solid #99f6e4;
+      border-left: 4px solid var(--tile-color);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.15rem;
+      text-align: left;
+      font-size: 0.92rem;
+      color: #115e59;
+    }
+
+    /* Invoer & knoppen */
+    .input-section {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .input-section label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.45rem;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.72rem 0.9rem;
+      font-size: 1.05rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--tile-color);
+    }
+
+    input[type="text"].input-correct {
+      border-color: var(--success) !important;
+      background-color: #ecfdf5 !important;
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    input[type="text"].input-wrong {
+      border-color: var(--danger) !important;
+      background-color: #fef2f2 !important;
+      color: #991b1b;
+      font-weight: 700;
+    }
+
+    .unit-label {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .feedback {
+      display: none;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      text-align: left;
+      font-size: 0.94rem;
+      font-weight: 600;
+      line-height: 1.45;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .feedback.correct {
+      display: flex;
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .feedback.wrong {
+      display: flex;
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .feedback-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-action:active {
+      transform: scale(0.99);
+    }
+
+    .btn-check {
+      background-color: var(--tile-color);
+    }
+
+    .btn-check:hover:not(:disabled) {
+      background-color: #0f766e;
+    }
+
+    .btn-check:disabled {
+      background-color: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    .btn-next {
+      display: none;
+      background-color: #2563eb;
+    }
+
+    .btn-next:hover {
+      background-color: #1d4ed8;
+    }
+
+    .hint-note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-btn">← Alle oefeningen</a>
+    <span class="topbar-title">Oefenprogramma's NaSk</span>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <span class="category-tag">Interactieve applicaties</span>
+      <h1>Totale Weerstand Berekenen</h1>
+
+      <div class="score-board">
+        <span>Goed: <span id="score-goed" style="color: var(--success)">0</span></span>
+        <span>Fout: <span id="score-fout" style="color: var(--danger)">0</span></span>
+      </div>
+
+      <div class="circuit-box">
+        <div class="circuit-title" id="circuit-title">Serieschakeling</div>
+        <div class="circuit-svg-wrap" id="circuit-svg-wrap"></div>
+      </div>
+
+      <div class="formula-box" id="formula-box">
+        <strong>Formule:</strong> R<sub>totaal</sub> = R<sub>1</sub> + R<sub>2</sub> + R<sub>3</sub> + ...
+      </div>
+
+      <div class="input-section">
+        <label for="user-answer">Wat is de totale weerstand? (rond af op 1 decimaal)</label>
+        <div class="input-row">
+          <input type="text" id="user-answer" placeholder="Vul je antwoord in..." autocomplete="off">
+          <span class="unit-label">Ω</span>
+        </div>
+        <div class="hint-note">Tip: je mag zowel een komma als een punt gebruiken.</div>
+      </div>
+
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="feedback-icon"></span>
+        <span id="feedback-text"></span>
+      </div>
+
+      <button class="btn-action btn-check" id="btn-check" onclick="checkAntwoord()" disabled>Controleer</button>
+      <button class="btn-action btn-next" id="btn-next" onclick="generateSchakeling()">↻ Nieuwe schakeling</button>
+    </div>
+  </main>
+
+  <script>
+    let schakeling = null;
+    let answered = false;
+    let score = { goed: 0, fout: 0 };
+
+    function fmtNL(num) {
+      return num.toFixed(1).replace('.', ',');
+    }
+
+    function svgBatterij(x, y) {
+      return `
+        <g>
+          <line x1="${x}" y1="${y}" x2="${x}" y2="${y + 20}" stroke="#1e293b" stroke-width="2.2" />
+          <line x1="${x - 16}" y1="${y + 20}" x2="${x + 16}" y2="${y + 20}" stroke="#1e293b" stroke-width="3.2" />
+          <line x1="${x - 10}" y1="${y + 28}" x2="${x + 10}" y2="${y + 28}" stroke="#1e293b" stroke-width="3.2" />
+          <line x1="${x}" y1="${y + 28}" x2="${x}" y2="${y + 48}" stroke="#1e293b" stroke-width="2.2" />
+          <text x="${x - 42}" y="${y + 29}" font-size="13" font-weight="600" fill="#64748b">12 V</text>
+        </g>
+      `;
+    }
+
+    function svgWeerstand(waarde, x, y) {
+      return `
+        <g>
+          <line x1="${x}" y1="${y}" x2="${x + 15}" y2="${y}" stroke="#1e293b" stroke-width="2.2" />
+          <rect x="${x + 15}" y="${y - 12}" width="44" height="24" fill="#ffffff" stroke="#1e293b" stroke-width="2.2" rx="3" />
+          <line x1="${x + 59}" y1="${y}" x2="${x + 74}" y2="${y}" stroke="#1e293b" stroke-width="2.2" />
+          <text x="${x + 37}" y="${y - 18}" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">${waarde} Ω</text>
+        </g>
+      `;
+    }
+
+    function tekenSerieSchakeling(weerstanden) {
+      const startX = 80;
+      const startY = 45;
+      const spacing = 105;
+      const rightX = startX + 50 + weerstanden.length * spacing + 15;
+      const wireY = startY + 85;
+      const svgWidth = rightX + 40;
+      const svgHeight = 165;
+
+      let inner = svgBatterij(startX, startY);
+      inner += `<line x1="${startX}" y1="${startY + 48}" x2="${startX}" y2="${wireY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${startX}" y1="${wireY}" x2="${startX + 50}" y2="${wireY}" stroke="#1e293b" stroke-width="2.2" />`;
+
+      weerstanden.forEach((w, i) => {
+        const rx = startX + 50 + i * spacing;
+        inner += svgWeerstand(w, rx, wireY);
+        if (i < weerstanden.length - 1) {
+          inner += `<line x1="${rx + 74}" y1="${wireY}" x2="${startX + 50 + (i + 1) * spacing}" y2="${wireY}" stroke="#1e293b" stroke-width="2.2" />`;
+        }
+      });
+
+      const lastEnd = startX + 50 + (weerstanden.length - 1) * spacing + 74;
+      inner += `<line x1="${lastEnd}" y1="${wireY}" x2="${rightX}" y2="${wireY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${rightX}" y1="${wireY}" x2="${rightX}" y2="${startY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${rightX}" y1="${startY}" x2="${startX}" y2="${startY}" stroke="#1e293b" stroke-width="2.2" />`;
+
+      return `<svg viewBox="0 0 ${svgWidth} ${svgHeight}" width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+    }
+
+    function tekenParallelSchakeling(weerstanden) {
+      const startX = 110;
+      const startY = 30;
+      const verticalSpacing = 68;
+      const firstBranchY = startY + 85;
+      const lastBranchY = firstBranchY + (weerstanden.length - 1) * verticalSpacing;
+      const leftBranchX = startX + 55;
+      const rightBranchX = startX + 190;
+      const outerRightX = startX + 245;
+      const svgWidth = 440;
+      const svgHeight = lastBranchY + 35;
+
+      let inner = svgBatterij(startX, startY);
+      inner += `<line x1="${startX}" y1="${startY + 48}" x2="${startX}" y2="${firstBranchY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${startX}" y1="${firstBranchY}" x2="${leftBranchX}" y2="${firstBranchY}" stroke="#1e293b" stroke-width="2.2" />`;
+
+      // Linker verdeelleiding
+      inner += `<line x1="${leftBranchX}" y1="${firstBranchY}" x2="${leftBranchX}" y2="${lastBranchY}" stroke="#1e293b" stroke-width="2.2" />`;
+
+      weerstanden.forEach((w, i) => {
+        const by = firstBranchY + i * verticalSpacing;
+        inner += `<line x1="${leftBranchX}" y1="${by}" x2="${leftBranchX + 30}" y2="${by}" stroke="#1e293b" stroke-width="2.2" />`;
+        inner += svgWeerstand(w, leftBranchX + 30, by);
+        inner += `<line x1="${leftBranchX + 104}" y1="${by}" x2="${rightBranchX}" y2="${by}" stroke="#1e293b" stroke-width="2.2" />`;
+
+        if (i > 0 && i < weerstanden.length - 1) {
+          inner += `<circle cx="${leftBranchX}" cy="${by}" r="3.5" fill="#1e293b" />`;
+          inner += `<circle cx="${rightBranchX}" cy="${by}" r="3.5" fill="#1e293b" />`;
+        }
+      });
+
+      // Rechter verdeelleiding & terugvoer naar batterij
+      inner += `<line x1="${rightBranchX}" y1="${firstBranchY}" x2="${rightBranchX}" y2="${lastBranchY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${rightBranchX}" y1="${firstBranchY}" x2="${outerRightX}" y2="${firstBranchY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${outerRightX}" y1="${firstBranchY}" x2="${outerRightX}" y2="${startY}" stroke="#1e293b" stroke-width="2.2" />`;
+      inner += `<line x1="${outerRightX}" y1="${startY}" x2="${startX}" y2="${startY}" stroke="#1e293b" stroke-width="2.2" />`;
+
+      return `<svg viewBox="0 0 ${svgWidth} ${svgHeight}" width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+    }
+
+    function generateSchakeling() {
+      const type = Math.random() > 0.5 ? 'serie' : 'parallel';
+      const aantalWeerstanden = Math.floor(Math.random() * 3) + 2; // 2-4 weerstanden
+      const weerstanden = Array.from({ length: aantalWeerstanden }, () =>
+        Math.floor(Math.random() * 990) + 10
+      );
+
+      let totaal;
+      if (type === 'serie') {
+        totaal = weerstanden.reduce((sum, r) => sum + r, 0);
+      } else {
+        totaal = 1 / weerstanden.reduce((sum, r) => sum + (1 / r), 0);
+      }
+
+      schakeling = { type, weerstanden, totaal };
+      answered = false;
+
+      const titleEl = document.getElementById('circuit-title');
+      const formulaEl = document.getElementById('formula-box');
+      const svgWrap = document.getElementById('circuit-svg-wrap');
+
+      if (type === 'serie') {
+        titleEl.textContent = 'Serieschakeling';
+        formulaEl.innerHTML = '<strong>Formule:</strong> R<sub>totaal</sub> = R<sub>1</sub> + R<sub>2</sub> + R<sub>3</sub> + ...';
+        svgWrap.innerHTML = tekenSerieSchakeling(weerstanden);
+      } else {
+        titleEl.textContent = 'Parallelschakeling';
+        formulaEl.innerHTML = '<strong>Formule:</strong> 1 / R<sub>totaal</sub> = 1 / R<sub>1</sub> + 1 / R<sub>2</sub> + 1 / R<sub>3</sub> + ...';
+        svgWrap.innerHTML = tekenParallelSchakeling(weerstanden);
+      }
+
+      const inputEl = document.getElementById('user-answer');
+      inputEl.value = '';
+      inputEl.disabled = false;
+      inputEl.className = '';
+
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.className = 'feedback';
+      feedbackEl.style.display = 'none';
+
+      const btnCheck = document.getElementById('btn-check');
+      btnCheck.style.display = 'block';
+      btnCheck.disabled = true;
+
+      document.getElementById('btn-next').style.display = 'none';
+      inputEl.focus();
+    }
+
+    function checkAntwoord() {
+      const inputEl = document.getElementById('user-answer');
+      const rawVal = inputEl.value.trim();
+      if (!rawVal || answered) return;
+
+      const gebruikerAntwoord = parseFloat(rawVal.replace(',', '.'));
+      if (isNaN(gebruikerAntwoord)) {
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.className = 'feedback wrong';
+        document.getElementById('feedback-icon').textContent = '✘';
+        document.getElementById('feedback-text').textContent = 'Voer een geldig getal in!';
+        return;
+      }
+
+      answered = true;
+      const correct = Math.abs(gebruikerAntwoord - schakeling.totaal) < 0.5;
+
+      const feedbackEl = document.getElementById('feedback');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackText = document.getElementById('feedback-text');
+
+      inputEl.disabled = true;
+
+      if (correct) {
+        score.goed++;
+        inputEl.className = 'input-correct';
+        feedbackEl.className = 'feedback correct';
+        feedbackIcon.textContent = '✔';
+        feedbackText.textContent = `Correct! De totale weerstand is ${fmtNL(schakeling.totaal)} Ω.`;
+      } else {
+        score.fout++;
+        inputEl.className = 'input-wrong';
+        feedbackEl.className = 'feedback wrong';
+        feedbackIcon.textContent = '✘';
+        feedbackText.textContent = `Helaas, dat klopt niet. De totale weerstand is ${fmtNL(schakeling.totaal)} Ω.`;
+      }
+
+      document.getElementById('score-goed').textContent = score.goed;
+      document.getElementById('score-fout').textContent = score.fout;
+
+      document.getElementById('btn-check').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'block';
+    }
+
+    const answerInput = document.getElementById('user-answer');
+    answerInput.addEventListener('input', function () {
+      document.getElementById('btn-check').disabled = (this.value.trim() === '');
+    });
+
+    document.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        if (!answered) {
+          checkAntwoord();
+        } else {
+          generateSchakeling();
+        }
+      }
+    });
+
+    generateSchakeling();
+  </script>
+
+</body>
+</html>
