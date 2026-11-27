@@ -380,7 +380,7 @@
           <option value="all">Alle categorieën</option>
           <option value="length">Lengte</option>
           <option value="weight">Massa</option>
-          <option value="volume">Inhoud</option>
+          <option value="volume">Volume</option>
           <option value="time">Tijd</option>
           <option value="force">Kracht</option>
           <option value="current">Stroomsterkte</option>
@@ -453,16 +453,16 @@
         { from: 'dag', to: 'g', factor: 10, name: 'Massa', tip: 'Er gaan 10 gram in één decagram. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 gram in één decagram. Deel door 10.' }
       ],
       volume: [
-        { from: 'L', to: 'mL', factor: 1000, name: 'Inhoud', tip: 'Er gaan 1000 milliliter in één liter. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milliliter in één liter. Deel door 1000.' },
-        { from: 'L', to: 'dL', factor: 10, name: 'Inhoud', tip: 'Er gaan 10 deciliter in één liter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 deciliter in één liter. Deel door 10.' },
-        { from: 'dL', to: 'cL', factor: 10, name: 'Inhoud', tip: 'Er gaan 10 centiliter in één deciliter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 centiliter in één deciliter. Deel door 10.' },
-        { from: 'cL', to: 'mL', factor: 10, name: 'Inhoud', tip: 'Er gaan 10 milliliter in één centiliter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 milliliter in één centiliter. Deel door 10.' },
-        { from: 'm³', to: 'dm³', factor: 1000, name: 'Inhoud', tip: 'Er gaan 1000 dm³ in één m³ (10×10×10). Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 dm³ in één m³ (10×10×10). Deel door 1000.' },
-        { from: 'dm³', to: 'cm³', factor: 1000, name: 'Inhoud', tip: 'Er gaan 1000 cm³ in één dm³ (10×10×10). Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 cm³ in één dm³ (10×10×10). Deel door 1000.' },
-        { from: 'L', to: 'dm³', factor: 1, name: 'Inhoud', tip: '1 liter is precies gelijk aan 1 dm³. Het antwoord is hetzelfde getal.', reverseTip: '1 dm³ is precies gelijk aan 1 liter. Het antwoord is hetzelfde getal.' },
-        { from: 'dm³', to: 'L', factor: 1, name: 'Inhoud', tip: '1 dm³ is precies gelijk aan 1 liter. Het antwoord is hetzelfde getal.', reverseTip: '1 liter is precies gelijk aan 1 dm³. Het antwoord is hetzelfde getal.' },
-        { from: 'mL', to: 'cm³', factor: 1, name: 'Inhoud', tip: '1 milliliter is precies gelijk aan 1 cm³. Het antwoord is hetzelfde getal.', reverseTip: '1 cm³ is precies gelijk aan 1 milliliter. Het antwoord is hetzelfde getal.' },
-        { from: 'cm³', to: 'mL', factor: 1, name: 'Inhoud', tip: '1 cm³ is precies gelijk aan 1 milliliter. Het antwoord is hetzelfde getal.', reverseTip: '1 milliliter is precies gelijk aan 1 cm³. Het antwoord is hetzelfde getal.' }
+        { from: 'L', to: 'mL', factor: 1000, name: 'Volume', tip: 'Er gaan 1000 milliliter in één liter. Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 milliliter in één liter. Deel door 1000.' },
+        { from: 'L', to: 'dL', factor: 10, name: 'Volume', tip: 'Er gaan 10 deciliter in één liter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 deciliter in één liter. Deel door 10.' },
+        { from: 'dL', to: 'cL', factor: 10, name: 'Volume', tip: 'Er gaan 10 centiliter in één deciliter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 centiliter in één deciliter. Deel door 10.' },
+        { from: 'cL', to: 'mL', factor: 10, name: 'Volume', tip: 'Er gaan 10 milliliter in één centiliter. Vermenigvuldig met 10.', reverseTip: 'Er gaan 10 milliliter in één centiliter. Deel door 10.' },
+        { from: 'm³', to: 'dm³', factor: 1000, name: 'Volume', tip: 'Er gaan 1000 dm³ in één m³ (10×10×10). Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 dm³ in één m³ (10×10×10). Deel door 1000.' },
+        { from: 'dm³', to: 'cm³', factor: 1000, name: 'Volume', tip: 'Er gaan 1000 cm³ in één dm³ (10×10×10). Vermenigvuldig met 1000.', reverseTip: 'Er gaan 1000 cm³ in één dm³ (10×10×10). Deel door 1000.' },
+        { from: 'L', to: 'dm³', factor: 1, name: 'Volume', tip: '1 liter is precies gelijk aan 1 dm³. Het antwoord is hetzelfde getal.', reverseTip: '1 dm³ is precies gelijk aan 1 liter. Het antwoord is hetzelfde getal.' },
+        { from: 'dm³', to: 'L', factor: 1, name: 'Volume', tip: '1 dm³ is precies gelijk aan 1 liter. Het antwoord is hetzelfde getal.', reverseTip: '1 liter is precies gelijk aan 1 dm³. Het antwoord is hetzelfde getal.' },
+        { from: 'mL', to: 'cm³', factor: 1, name: 'Volume', tip: '1 milliliter is precies gelijk aan 1 cm³. Het antwoord is hetzelfde getal.', reverseTip: '1 cm³ is precies gelijk aan 1 milliliter. Het antwoord is hetzelfde getal.' },
+        { from: 'cm³', to: 'mL', factor: 1, name: 'Volume', tip: '1 cm³ is precies gelijk aan 1 milliliter. Het antwoord is hetzelfde getal.', reverseTip: '1 milliliter is precies gelijk aan 1 cm³. Het antwoord is hetzelfde getal.' }
       ],
       time: [
         { from: 'uur', to: 's', factor: 3600, name: 'Tijd', tip: 'Er gaan 60 minuten in een uur, en 60 seconden in een minuut: 60 × 60 = 3600. Vermenigvuldig met 3600.', reverseTip: 'Er gaan 3600 seconden in één uur. Deel dus door 3600.' },
